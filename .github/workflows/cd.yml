@@ -11,8 +11,8 @@ jobs:
       - uses: actions/checkout@v3     
 
       - run: |
-          apt-get update
-          apt-get install libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev -y
+          sudo apt-get update
+          sudo apt-get install libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev -y
 
       - name: Build and Publish to PyPi
         uses: JRubics/poetry-publish@v1.10
