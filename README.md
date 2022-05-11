@@ -38,6 +38,7 @@
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
+        <li><a href="#installation">Installation</a></li>
         <li><a href="#usage">Usage</a></li>
         <li><a href="#options">Options</a></li>
       </ul>
@@ -53,13 +54,23 @@
 
 ## About The Project
 
-`voice-presentation-control` is a tool that allows you to control your presentation using voice without a presentation pen.
+`voice-presentation-control` is a tool that allows you to control your presentation using voice when you don't have a presentation pen or when it's inconvinient to use the keyboard.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 
 ## Getting Started
+
+### Installation
+
+#### Using `pip`
+
+`pip install voice-presentation-control`
+
+#### Using `.whl`
+
+See [releases](https://github.com/wst24365888/voice-presentation-control/releases).
 
 ### Usage
 
