@@ -23,12 +23,12 @@ def voice_presentation_control(
         False,
         "--verbose",
         "-v",
-        help="Show the detailed log of voice_presentation_control.",
+        help="Show the detailed log of voice-presentation-control.",
     ),
     _: Optional[bool] = typer.Option(
         None,
         "--version",
-        help="Show the version of voice_presentation_control.",
+        help="Show the version of voice-presentation-control.",
         callback=_version_callback,
         is_eager=True,
     )
@@ -37,4 +37,4 @@ def voice_presentation_control(
 
 
 def start_cli() -> None:
-    app(prog_name=__app_name__)
+    app(prog_name="vpc")
