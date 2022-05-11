@@ -7,6 +7,7 @@ authors = ["Xyphuz <hansen0715.2@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 PyAudio = "^0.2.11"
+typer = "^0.4.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
