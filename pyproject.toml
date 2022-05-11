@@ -8,6 +8,7 @@ authors = ["Xyphuz <xyphuzwu@gmail.com>"]
 python = "^3.9"
 PyAudio = "^0.2.11"
 typer = "^0.4.1"
+PyAutoGUI = "^0.9.53"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
