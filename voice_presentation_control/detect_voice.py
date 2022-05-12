@@ -27,7 +27,7 @@ def Monitor():
             audio_data = np.fromstring(data, dtype=np.short)    #整合剛剛的一小段資料
             large_sample_count = np.sum( audio_data > 800 )
             temp = np.max(audio_data)       #找聲音最大值
-            if temp > 2 :     #暫時設定聲音大小超過800代表有人說話
+            if temp > 800 :     #暫時設定聲音大小超過800代表有人說話
                 print ("true")
                 print ('当前阈值：',temp )
                 # 真的錄製聲音
