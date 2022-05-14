@@ -24,7 +24,7 @@ jobs:
 
       - run: |
           sudo apt-get update
-          sudo apt-get install libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev -y
+          sudo apt-get install libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev libpulse-dev -y
               
       - name: Setup Python 3.10.4
         uses: actions/setup-python@v3
