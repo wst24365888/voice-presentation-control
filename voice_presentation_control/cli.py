@@ -1,7 +1,7 @@
 import typer
+import pyautogui
 import voice_presentation_control.mic as mic
 from voice_presentation_control import __app_name__, __version__
-from voice_presentation_control.actor import Actor
 from voice_presentation_control.controller import Controller
 from voice_presentation_control.action_matcher import ActionMatcher
 from voice_presentation_control.recognizer import Recognizer
@@ -36,18 +36,11 @@ def start(
         "-t",
         help="Set threshold. Test your environment by `vpc mic test`.",
     ),
-    verbose: bool = typer.Option(
-        False,
-        "--verbose",
-        "-v",
-        help="Show the detailed log of voice-presentation-control.",
-    ),
 ) -> None:
-    actor = Actor(verbose=verbose)
     action_matcher = ActionMatcher()
 
-    action_matcher.add_action("next page", actor.press_down)
-    action_matcher.add_action("last page", actor.press_up)
+    action_matcher.add_action("next page", lambda: pyautogui.press("down"))
+    action_matcher.add_action("last page", lambda: pyautogui.press("up"))
 
     controller = Controller(
         mic.Mic(input_device_index),

@@ -10,7 +10,7 @@ class ActionMatcher:
 
     def match(self, action) -> bool:
         for action_name, action_function in self.actions.items():
-            if action in action_name:
+            if action_name in action:
                 action_function()
                 return True
 
