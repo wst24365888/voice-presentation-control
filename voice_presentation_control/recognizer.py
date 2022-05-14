@@ -1,4 +1,4 @@
-from pyparsing import Optional
+from typing import Optional
 import speech_recognition as sr
 
 
