@@ -1,3 +1,4 @@
+from pyparsing import Optional
 import speech_recognition as sr
 
 
@@ -5,7 +6,7 @@ class Recognizer:
     def __init__(self) -> None:
         self.r = sr.Recognizer()
 
-    def recognize(self, filename: str) -> str | None:
+    def recognize(self, filename: str) -> Optional[str]:
         with sr.AudioFile(filename) as source:
             audio = self.r.record(source)
 
