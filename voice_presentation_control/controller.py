@@ -1,8 +1,8 @@
 import os
 import time
 import wave
-from array import array
 import pyaudio
+from array import array
 from voice_presentation_control.action_matcher import ActionMatcher
 from voice_presentation_control.mic import Mic
 from voice_presentation_control.recognizer import Recognizer
