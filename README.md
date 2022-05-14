@@ -40,7 +40,6 @@
       <ul>
         <li><a href="#installation">Installation</a></li>
         <li><a href="#usage">Usage</a></li>
-        <li><a href="#options">Options</a></li>
       </ul>
     </li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -72,17 +71,66 @@
 
 See [releases](https://github.com/wst24365888/voice-presentation-control/releases).
 
-### Usage
+### Usages
 
-`vpc [OPTIONS]`
+#### Usage of `vpc`
 
-### Options
+`vpc [OPTIONS] COMMAND`
+
+##### Options
 
 | Option          | Description                                          |
 | --------------- | ---------------------------------------------------- |
 | `-v, --verbose` | Show the detailed log of voice-presentation-control. |
 | `--version`     | Show the version of voice-presentation-control.      |
-| `--help`        | Show this message and exit.                          |
+| `--help`        | Show help and exit.                                  |
+
+##### Commands
+
+| Command | Description                                  |
+| ------- | -------------------------------------------- |
+| `mic`   | Check the settings for the microphone input. |
+| `start` | Start vpc.                                   |
+
+#### Usage of `vpc mic`
+
+`vpc mic [OPTIONS] COMMAND`
+
+##### Options
+
+| Option   | Description         |
+| -------- | ------------------- |
+| `--help` | Show help and exit. |
+
+##### Commands
+
+| Command | Description                                                                                         |
+| ------- | --------------------------------------------------------------------------------------------------- |
+| `list`  | List all audio input devices. You can check the device index you want to use by using this command. |
+| `test`  | Test audio environment. Talk and determine the threshold by using this command.                     |
+
+#### Usage of `vpc mic test`
+
+`vpc mic test [OPTIONS]`
+
+##### Options
+
+| Option                     | Description                                                                |
+| -------------------------- | -------------------------------------------------------------------------- |
+| `-i, --input-device-index` | Set input device index. Check your devices by `vpc mic list`. [default: 1] |
+| `--help`                   | Show help and exit.                                                        |
+
+#### Usage of `vpc start`
+
+`vpc start [OPTIONS]`
+
+##### Options
+
+| Option                     | Description                                                                |
+| -------------------------- | -------------------------------------------------------------------------- |
+| `-i, --input-device-index` | Set input device index. Check your devices by `vpc mic list`. [default: 1] |
+| `-t, --threshold`          | Set threshold. Test your environment by `vpc mic test`.  [default: 3000]   |
+| `--help`                   | Show help and exit.                                                        |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
