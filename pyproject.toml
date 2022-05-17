@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "voice-presentation-control"
-version = "0.1.5"
+version = "0.1.6"
 description = "voice-presentation-control is a tool that allows you to control your presentation using voice when you don't have a presentation pen or when it's inconvinient to use the keyboard."
 authors = ["Xyphuz <xyphuzwu@gmail.com>"]
 readme = "README.md"
@@ -9,6 +9,7 @@ homepage = "https://github.com/wst24365888/voice-presentation-control"
 repository = "https://github.com/wst24365888/voice-presentation-control"
 include = [
     "LICENSE",
+    "voice_presentation_control/vosk_models/**",
 ]
 
 [tool.poetry.dependencies]
