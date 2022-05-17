@@ -21,7 +21,7 @@ jobs:
 
       - run: |
           sudo apt-get update
-          sudo apt-get install -y libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev dbus-x11 python3-xlib python3-tk python3-dev xvfb xserver-xephyr libpulse-dev swig
+          sudo apt-get install -y libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev dbus-x11 python3-xlib python3-tk python3-dev xvfb xserver-xephyr
           Xvfb :99 -ac &
           touch ~/.Xauthority
           sudo python -m pip install pytest-xvfb
