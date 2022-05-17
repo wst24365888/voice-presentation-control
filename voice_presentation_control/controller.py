@@ -49,17 +49,10 @@ class Controller:
 
                 # print("recording saved")
 
-                FILE_NAME = f"./RECORDING-" + \
-                    time.strftime("%Y%m%d-%H%M%S") + ".wav"
+                # FILE_NAME = f"./RECORDING-" + \
+                #     time.strftime("%Y%m%d-%H%M%S") + ".wav"
 
-                wavfile = wave.open(FILE_NAME, 'wb')
-                wavfile.setnchannels(CHANNELS)
-                wavfile.setsampwidth(audio.get_sample_size(FORMAT))
-                wavfile.setframerate(RATE)
-                wavfile.writeframes(b''.join(frames))
-                wavfile.close()
-
-                result = self.recognizer.recognize(FILE_NAME)
+                result = self.recognizer.recognize(b''.join(frames))
                 if result is not None:
                     print(result, end=' ', flush=True)
                     hit = self.action_matcher.match(result)
@@ -67,4 +60,4 @@ class Controller:
                     if hit:
                         print("(HIT)", end=' ', flush=True)
 
-                os.remove(FILE_NAME)
+                # os.remove(FILE_NAME)
