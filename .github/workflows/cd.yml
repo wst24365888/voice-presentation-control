@@ -15,4 +15,4 @@ jobs:
         uses: JRubics/poetry-publish@v1.10
         with:
           pypi_token: ${{ secrets.PYPI_TOKEN }}
-          extra_build_dependency_packages: "libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev libpulse-dev swig"
+          extra_build_dependency_packages: "libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev"
