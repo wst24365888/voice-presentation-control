@@ -18,7 +18,6 @@ PyAudio = "^0.2.11"
 typer = "^0.4.1"
 PyAutoGUI = "^0.9.53"
 numpy = "^1.22.3"
-SpeechRecognition = "^3.8.1"
 vosk = "0.3.32"
 
 [tool.poetry.dev-dependencies]

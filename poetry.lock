@@ -2108,14 +2108,6 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
-name = "speechrecognition"
-version = "3.8.1"
-description = "Library for performing speech recognition, with support for several engines and APIs, online and offline."
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -2154,7 +2146,7 @@ cffi = ">=1.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "cc837cc0bcc0a3585aede8c0b274a8090ee9489a060d4178f57d1bf6281610b0"
+content-hash = "1f5fa56318491c176cda3e0f7680e4207bcfbae9ef9fa95fc88301661cef2e39"
 
 [metadata.files]
 atomicwrites = [
@@ -3081,9 +3073,6 @@ pytweening = [
 rubicon-objc = [
     {file = "rubicon-objc-0.4.2.tar.gz", hash = "sha256:6fbc8e12bd66c84427cfb95634c4bd10ade356ae2b2ae0d2b51dcbf5810d2602"},
     {file = "rubicon_objc-0.4.2-py3-none-any.whl", hash = "sha256:c8780b9d6c3c906642080a9f8b710f5823a498c17e9bbea7f70781ea6ede7962"},
-]
-speechrecognition = [
-    {file = "SpeechRecognition-3.8.1-py2.py3-none-any.whl", hash = "sha256:4d8f73a0c05ec70331c3bacaa89ecc06dfa8d9aba0899276664cda06ab597e8e"},
 ]
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
