@@ -11,11 +11,24 @@ repos:
         - id: check-yaml
         - id: end-of-file-fixer
         - id: trailing-whitespace
-    - repo: https://github.com/psf/black
-      rev: 22.3.0
+    - repo: https://github.com/pycqa/flake8
+      rev: 4.0.1
       hooks:
-        - id: black
+        - id: flake8
     - repo: https://github.com/pycqa/isort
       rev: 5.10.1
       hooks:
         - id: isort
+    - repo: https://github.com/psf/black
+      rev: 22.3.0
+      hooks:
+        - id: black
+    - repo: local
+      hooks:
+        - id: pyright
+          name: pyright
+          entry: pyright
+          language: node
+          pass_filenames: false
+          types: [python]
+          additional_dependencies: ['pyright@1.1.247']
