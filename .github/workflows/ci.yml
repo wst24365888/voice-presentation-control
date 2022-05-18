@@ -15,7 +15,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-          
+
       - name: Switch to Current Branch
         run: git checkout ${{ env.BRANCH }}
 
@@ -25,12 +25,12 @@ jobs:
           Xvfb :99 -ac &
           touch ~/.Xauthority
           sudo python -m pip install pytest-xvfb
-              
+
       - name: Setup Python 3.10.4
         uses: actions/setup-python@v3
         with:
           python-version: '3.10.4'
-      
+
       - name: Setup Poetry
         uses: Gr1N/setup-poetry@v7
         with:
