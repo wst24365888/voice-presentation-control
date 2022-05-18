@@ -3,8 +3,6 @@ from array import array
 import pyaudio
 import typer
 
-from voice_presentation_control import CHANNELS, CHUNK, FORMAT, RATE
-
 app = typer.Typer(
     no_args_is_help=True,
     subcommand_metavar="COMMAND",
@@ -17,12 +15,12 @@ class Mic:
     def __init__(self, input_device_index: int) -> None:
         self.input_device_index = input_device_index
 
-    def start(self) -> pyaudio.Stream:
+    def start(self, chunk: int, rate: int) -> pyaudio.Stream:
         return audio.open(
-            format=FORMAT,
-            channels=CHANNELS,
-            rate=RATE,
-            frames_per_buffer=CHUNK,
+            format=pyaudio.paInt16,
+            channels=1,
+            rate=rate,
+            frames_per_buffer=chunk,
             input=True,
             input_device_index=self.input_device_index,
         )
@@ -59,11 +57,23 @@ def test(
         "-i",
         help="Set input device index. Check your devices by `vpc mic list`.",
     ),
+    chunk: int = typer.Option(
+        2048,
+        "--chunk",
+        "-c",
+        help="Set record chunk.",
+    ),
+    rate: int = typer.Option(
+        44100,
+        "--rate",
+        "-r",
+        help="Set input stream rate.",
+    ),
 ) -> None:
-    stream = Mic(input_device_index).start()
+    stream = Mic(input_device_index).start(chunk, rate)
 
     while True:
-        data = stream.read(CHUNK)
+        data = stream.read(chunk)
         data_chunk = array("h", data)
         vol = max(data_chunk)
         print(vol)
