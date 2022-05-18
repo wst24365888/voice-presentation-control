@@ -26,7 +26,7 @@ class Controller:
             data_chunk = array('h', data)
             vol = max(data_chunk)
 
-            if vol >= 3000:
+            if vol >= self.threshold:
                 # print("recording triggered")
 
                 frames = [data]
