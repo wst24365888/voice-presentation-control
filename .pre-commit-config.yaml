@@ -15,6 +15,8 @@ repos:
       rev: 4.0.1
       hooks:
         - id: flake8
+          args:
+            - "--max-line-length=120"
     - repo: https://github.com/pycqa/isort
       rev: 5.10.1
       hooks:
@@ -23,6 +25,8 @@ repos:
       rev: 22.3.0
       hooks:
         - id: black
+          args: # arguments to configure black
+            - --line-length=120
     - repo: local
       hooks:
         - id: pyright

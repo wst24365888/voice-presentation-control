@@ -3,7 +3,7 @@ from typing import Callable, Dict
 
 class ActionMatcher:
     def __init__(self) -> None:
-        self.actions: Dict[str, function] = {}
+        self.actions: Dict[str, Callable[[], None]] = {}
 
     def add_action(self, action_name, action: Callable[[], None]) -> None:
         self.actions[action_name] = action
