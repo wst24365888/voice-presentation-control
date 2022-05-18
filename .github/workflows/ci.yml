@@ -34,7 +34,7 @@ jobs:
       - name: Execute pre-commit
         uses: pre-commit/action@v2.0.3
         with:
-          extra_args: --show-diff-on-failure
+          extra_args: --all-files --show-diff-on-failure
 
       - name: Setup Poetry
         uses: Gr1N/setup-poetry@v7
