@@ -36,6 +36,18 @@ def start(
         "-t",
         help="Set threshold. Test your environment by `vpc mic test`.",
     ),
+    chunk: int = typer.Option(
+        2048,
+        "--chunk",
+        "-c",
+        help="Set record chunk.",
+    ),
+    rate: int = typer.Option(
+        44100,
+        "--rate",
+        "-r",
+        help="Set input stream rate.",
+    ),
 ) -> None:
     action_matcher = ActionMatcher()
 
@@ -45,6 +57,8 @@ def start(
     controller = Controller(
         mic.Mic(input_device_index),
         threshold,
+        chunk,
+        rate,
         action_matcher,
         Recognizer(),
     )

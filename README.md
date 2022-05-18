@@ -118,6 +118,8 @@ See [releases](https://github.com/wst24365888/voice-presentation-control/release
 | Option                     | Description                                                                |
 | -------------------------- | -------------------------------------------------------------------------- |
 | `-i, --input-device-index` | Set input device index. Check your devices by `vpc mic list`. [default: 1] |
+| `-c, --chunk`              | Set record chunk.  [default: 2048]                                         |
+| `-r, --rate`               | Set input stream rate.  [default: 44100]                                   |
 | `--help`                   | Show help and exit.                                                        |
 
 #### Usage of `vpc start`
@@ -130,6 +132,8 @@ See [releases](https://github.com/wst24365888/voice-presentation-control/release
 | -------------------------- | -------------------------------------------------------------------------- |
 | `-i, --input-device-index` | Set input device index. Check your devices by `vpc mic list`. [default: 1] |
 | `-t, --threshold`          | Set threshold. Test your environment by `vpc mic test`.  [default: 3000]   |
+| `-c, --chunk`              | Set record chunk.  [default: 2048]                                         |
+| `-r, --rate`               | Set input stream rate.  [default: 44100]                                   |
 | `--help`                   | Show help and exit.                                                        |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
