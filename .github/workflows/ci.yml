@@ -41,9 +41,8 @@ jobs:
           poetry install --no-root
 
       - name: Execute pre-commit
-        uses: pre-commit/action@v2.0.3
-        with:
-          extra_args: --all-files --show-diff-on-failure
+        run: |
+          poetry run python -m pre_commit run --all-files --show-diff-on-failure
 
       - name: Run Pytest
         run: |
