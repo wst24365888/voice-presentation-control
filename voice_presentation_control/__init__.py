@@ -1,7 +1,7 @@
 import pyaudio
 
 __app_name__ = "voice_presentation_control"
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
