@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "voice-presentation-control"
-version = "0.2.4"
+version = "0.2.5"
 description = "voice-presentation-control is a tool that allows you to control your presentation using voice when you don't have a presentation pen or when it's inconvinient to use the keyboard."
 authors = ["Xyphuz <xyphuzwu@gmail.com>"]
 readme = "README.md"
