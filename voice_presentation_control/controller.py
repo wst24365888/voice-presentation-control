@@ -38,7 +38,7 @@ class Controller:
                     data_chunk = array('h', data)
                     vol = max(data_chunk)
 
-                    if vol < 3000:
+                    if vol < self.threshold:
                         flag += 1
                     else:
                         flag = 0
