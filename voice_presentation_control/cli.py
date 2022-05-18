@@ -1,11 +1,11 @@
-import typer
 import pyautogui
+import typer
+
 import voice_presentation_control.mic as mic
 from voice_presentation_control import __app_name__, __version__
-from voice_presentation_control.controller import Controller
 from voice_presentation_control.action_matcher import ActionMatcher
+from voice_presentation_control.controller import Controller
 from voice_presentation_control.recognizer import Recognizer
-
 
 app = typer.Typer(
     no_args_is_help=True,

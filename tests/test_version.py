@@ -1,6 +1,6 @@
 from typer.testing import CliRunner
-from voice_presentation_control import cli, __app_name__, __version__
 
+from voice_presentation_control import __app_name__, __version__, cli
 
 runner = CliRunner()
 
