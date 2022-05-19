@@ -11,7 +11,7 @@ import numpy
 import wave
 
 audio = pyaudio.PyAudio()
-frames_q = Queue(maxsize=int(RATE / CHUNK)//1.5)
+
 class Controller:
     def __init__(
         self,
@@ -28,6 +28,7 @@ class Controller:
         self.rate = rate
         self.action_matcher = action_matcher
         self.recognizer = recognizer
+        self.frames_q = Queue(maxsize=int(self.rate / self.chunk)//1.5)
 
     def start(self) -> None:
         self.stream = self.mic.start(self.chunk, self.rate)
@@ -36,18 +37,18 @@ class Controller:
             data = self.stream.read(self.chunk)
             data_chunk = array("h", data)
             vol = max(data_chunk)
-            if frames_q.full():
-                frames_q.get()
-            frames_q.put(data)
+            if self.frames_q.full():
+                self.frames_q.get()
+            self.frames_q.put(data)
 
             if vol >= self.threshold:
                 # print("recording triggered")
 
-                frames = list(frames_q.queue)
+                frames = list(self.frames_q.queue)
                 flag = 0
 
                 for _ in range(0, int(self.rate / self.chunk)*3):# * RECORD_SECONDS)):
-                    data = self.stream.read(CHUNK)
+                    data = self.stream.read(self.chunk)
                     frames.append(data)
                     data_chunk = array("h", data)
                     vol = max(data_chunk)
@@ -60,9 +61,9 @@ class Controller:
                     if flag >= int(self.rate / self.chunk):
                         print("recording stopped")
                         break
-                frames_q.empty()
+                self.frames_q.empty()
                 #save_frames_to_wav(frames)
-                result = self.recognizer.recognize(b"".join(frames))
+                result = self.recognizer.recognize(b"".join(frames), self.rate)
                 if result is not None:
                     print(result, end=" ", flush=True)
                     hit = self.action_matcher.match(result)
