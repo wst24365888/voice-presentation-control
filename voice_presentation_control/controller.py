@@ -1,7 +1,9 @@
 import wave
 from array import array
+from collections import deque
 from queue import Queue
 from threading import Thread
+from typing import List
 
 import pyaudio
 
@@ -32,7 +34,7 @@ class Controller:
         self.tmp_frame_q = Queue(maxsize=int(self.rate / self.chunk // 1.5))
         self.record_frame_q = Queue(maxsize=int(self.rate / self.chunk) * MAX_RECORD_SECOND)
 
-    def put_queue(self, _queue, item) -> None:
+    def put_queue(self, _queue: Queue, item: bytes) -> None:
         if _queue.full():
             _queue.get()
         _queue.put(item)
@@ -73,10 +75,13 @@ class Controller:
                             # print("recording stopped")
                             # save_frames_to_wav(frames)
 
-                self.tmp_frame_q.queue.clear()
-                self.record_frame_q.queue.clear()
+                tmp_frame_dq: deque = self.tmp_frame_q.queue
+                tmp_frame_dq.clear()
 
-    def get_recognizer_result(self, record_frames) -> None:
+                record_frame_dq: deque = self.record_frame_q.queue
+                record_frame_dq.clear()
+
+    def get_recognizer_result(self, record_frames: List[bytes]) -> None:
         result = self.recognizer.recognize(b"".join(record_frames), self.rate)
         # self.save_frames_to_wav(record_frames)
         if result is not None:
@@ -85,10 +90,9 @@ class Controller:
             if hit:
                 print("(HIT)", end=" ", flush=True)
 
-    def save_frames_to_wav(self, frames) -> None:
+    def save_frames_to_wav(self, frames: List[bytes]) -> None:
         wavefile = wave.open("voice_presentation_control/wave_tmp/test_save.wav", "wb")
         wavefile.setnchannels(1)
         wavefile.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
         wavefile.setframerate(self.rate)
-        for frame in frames:
-            wavefile.writeframes(frame)
+        wavefile.writeframes(b"".join(frames))
