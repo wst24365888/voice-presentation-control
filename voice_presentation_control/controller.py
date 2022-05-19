@@ -79,17 +79,17 @@ class Controller:
 
     def get_recognizer_result(self,record_frames):
         result = self.recognizer.recognize(b"".join(record_frames), self.rate)
-        #save_frames_to_wav(record_frames)
+        #self.save_frames_to_wav(record_frames)
         if result is not None:
             print(result, end=" ", flush=True)
             hit = self.action_matcher.match(result)
             if hit:
                 print("(HIT)", end=" ", flush=True)
 
-def save_frames_to_wav(frames):
-    wavefile = wave.open('voice_presentation_control/wave_tmp/test_save.wav', 'wb')
-    wavefile.setnchannels(1)
-    wavefile.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
-    wavefile.setframerate(44100)
-    for frame in frames:
-        wavefile.writeframes(frame)
+    def save_frames_to_wav(self,frames):
+        wavefile = wave.open('voice_presentation_control/wave_tmp/test_save.wav', 'wb')
+        wavefile.setnchannels(1)
+        wavefile.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
+        wavefile.setframerate(self.rate)
+        for frame in frames:
+            wavefile.writeframes(frame)
