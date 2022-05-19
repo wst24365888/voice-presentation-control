@@ -77,7 +77,7 @@ class Controller:
                 self.tmp_frame_q.queue.clear()
                 self.record_frame_q.queue.clear()
 
-    def get_recognizer_result(self,record_frames):
+    def get_recognizer_result(self,record_frames)->None:
         result = self.recognizer.recognize(b"".join(record_frames), self.rate)
         #self.save_frames_to_wav(record_frames)
         if result is not None:
@@ -86,7 +86,7 @@ class Controller:
             if hit:
                 print("(HIT)", end=" ", flush=True)
 
-    def save_frames_to_wav(self,frames):
+    def save_frames_to_wav(self,frames)->None:
         wavefile = wave.open('voice_presentation_control/wave_tmp/test_save.wav', 'wb')
         wavefile.setnchannels(1)
         wavefile.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
