@@ -1,15 +1,18 @@
 from array import array
-
+import os
 import pyaudio
+
+from queue import Queue
 
 from voice_presentation_control import CHUNK, RATE, RECORD_SECONDS
 from voice_presentation_control.action_matcher import ActionMatcher
 from voice_presentation_control.mic import Mic
 from voice_presentation_control.recognizer import Recognizer
+import numpy
+import wave
 
 audio = pyaudio.PyAudio()
-
-
+frames_q = Queue(maxsize=int(RATE / CHUNK)//1.5)
 class Controller:
     def __init__(
         self,
@@ -30,14 +33,17 @@ class Controller:
             data = self.stream.read(CHUNK)
             data_chunk = array("h", data)
             vol = max(data_chunk)
+            if frames_q.full():
+                frames_q.get()
+            frames_q.put(data)
 
             if vol >= self.threshold:
                 # print("recording triggered")
 
-                frames = [data]
+                frames = list(frames_q.queue)
                 flag = 0
 
-                for _ in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+                for _ in range(0, int(RATE / CHUNK)*3):# * RECORD_SECONDS)):
                     data = self.stream.read(CHUNK)
                     frames.append(data)
                     data_chunk = array("h", data)
@@ -48,15 +54,15 @@ class Controller:
                     else:
                         flag = 0
 
-                    if flag >= 20:
-                        # print("recording stopped")
+                    if flag >= int(RATE / CHUNK):
+                        print("recording stopped")
                         break
-
+                frames_q.empty()
                 # print("recording saved")
 
                 # FILE_NAME = f"./RECORDING-" + \
                 #     time.strftime("%Y%m%d-%H%M%S") + ".wav"
-
+                save_frames_to_wav(frames)
                 result = self.recognizer.recognize(b"".join(frames))
                 if result is not None:
                     print(result, end=" ", flush=True)
@@ -66,3 +72,12 @@ class Controller:
                         print("(HIT)", end=" ", flush=True)
 
                 # os.remove(FILE_NAME)
+
+def save_frames_to_wav(frames):
+    wavefile = wave.open('voice_presentation_control/wave_tmp/test_save.wav', 'wb')
+    wavefile.setnchannels(1)
+    wavefile.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
+    wavefile.setframerate(44100)
+    for frame in frames:
+        wavefile.writeframes(frame)
+
