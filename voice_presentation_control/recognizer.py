@@ -6,9 +6,12 @@ import vosk
 
 
 class Recognizer:
-    def __init__(self) -> None:
+    def __init__(self, lang: str) -> None:
         vosk.SetLogLevel(-1)
-        self.model = vosk.Model(os.path.join(os.path.dirname(__file__)) + "/vosk_models/vosk-model-small-en-us-0.15")
+        try:
+            self.model = vosk.Model(os.path.join(os.path.dirname(__file__)) + f"/vosk_models/{lang}")
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Language '{lang}' is not supported.")
 
     def recognize(self, data: bytes, rate: int) -> Optional[str]:
         rec = vosk.KaldiRecognizer(self.model, rate)

@@ -7,7 +7,7 @@ class ActionMatcher:
         self.actions: Dict[str, Callable[[], None]] = {}
         self.last_trigger_time = time.time()
 
-    def add_action(self, action_name, action: Callable[[], None]) -> None:
+    def add_action(self, action_name: str, action: Callable[[], None]) -> None:
         self.actions[action_name] = action
 
     def throttle(self, func: Callable[[], None], timeout: int) -> bool:
@@ -18,10 +18,10 @@ class ActionMatcher:
 
         return False
 
-    def match(self, action) -> str:
-        for action_name, action_function in self.actions.items():
-            if action_name in action:
-                executed = self.throttle(action_function, 1)
+    def match(self, instruction: str) -> str:
+        for action_name, action in self.actions.items():
+            if action_name in instruction:
+                executed = self.throttle(action, 1)
                 if executed:
                     return f"HIT: {action_name}"
 

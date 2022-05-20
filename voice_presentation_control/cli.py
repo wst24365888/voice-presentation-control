@@ -1,3 +1,7 @@
+import json
+import os
+from typing import Callable, Dict
+
 import pyautogui
 import typer
 
@@ -42,6 +46,12 @@ def start(
         "-c",
         help="Set record chunk.",
     ),
+    lang: str = typer.Option(
+        "en",
+        "--language",
+        "-l",
+        help="Set language to recognize.",
+    ),
     rate: int = typer.Option(
         44100,
         "--rate",
@@ -51,16 +61,29 @@ def start(
 ) -> None:
     action_matcher = ActionMatcher()
 
-    action_matcher.add_action("next page", lambda: pyautogui.press("down"))
-    action_matcher.add_action("last page", lambda: pyautogui.press("up"))
+    try:
+        with open(os.path.join(os.path.dirname(__file__)) + "/configs/actions.json") as f:
+            data = json.load(f)
+
+            try:
+                actions: Dict[str, str] = data[lang]
+                for action_name, pyautogui_instruction in actions.items():
+                    action: Callable[[str], None] = lambda bind_instruction=pyautogui_instruction: pyautogui.press(
+                        bind_instruction
+                    )
+                    action_matcher.add_action(action_name=action_name, action=action)
+            except KeyError:
+                raise KeyError(f"Language '{lang}' is not set in actions.json")
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Language '{lang}' is not supported.")
 
     controller = Controller(
-        mic.Mic(input_device_index),
+        mic.Mic(input_device_index=input_device_index),
         threshold,
         chunk,
         rate,
         action_matcher,
-        Recognizer(),
+        Recognizer(lang=lang),
     )
     controller.start()
 
