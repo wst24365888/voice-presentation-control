@@ -46,17 +46,17 @@ def start(
         "-c",
         help="Set record chunk.",
     ),
-    lang: str = typer.Option(
-        "en",
-        "--language",
-        "-l",
-        help="Set language to recognize.",
-    ),
     rate: int = typer.Option(
         44100,
         "--rate",
         "-r",
         help="Set input stream rate.",
+    ),
+    lang: str = typer.Option(
+        "en",
+        "--language",
+        "-l",
+        help="Set language to recognize.",
     ),
 ) -> None:
     action_matcher = ActionMatcher()
