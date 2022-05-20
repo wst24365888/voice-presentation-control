@@ -87,10 +87,11 @@ See [releases](https://github.com/wst24365888/voice-presentation-control/release
 
 ##### Commands
 
-| Command | Description                                  |
-| ------- | -------------------------------------------- |
-| `mic`   | Check the settings for the microphone input. |
-| `start` | Start vpc.                                   |
+| Command  | Description                                  |
+| -------- | -------------------------------------------- |
+| `config` | Edit the config file.                        |
+| `mic`    | Check the settings for the microphone input. |
+| `start`  | Start vpc.                                   |
 
 #### Usage of `vpc mic`
 

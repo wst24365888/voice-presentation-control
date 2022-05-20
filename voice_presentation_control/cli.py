@@ -1,5 +1,7 @@
 import json
 import os
+import platform
+import subprocess
 from typing import Callable, Dict, List, Union
 
 import pyautogui
@@ -24,6 +26,18 @@ def _version_callback(value: bool) -> None:
     if value:
         typer.echo(f"{__app_name__} {__version__}")
         raise typer.Exit()
+
+
+@app.command()
+def config():
+    config_file = os.path.join(os.path.dirname(__file__)) + "/configs/actions.json"
+
+    if platform.system() == "Windows":
+        os.startfile(config_file)
+    elif platform.system() == "Darwin":
+        os.system("open " + config_file)
+    else:
+        subprocess.call(["xdg-open", config_file])
 
 
 @app.command()
