@@ -58,7 +58,7 @@ def test(
         help="Set input device index. Check your devices by `vpc mic list`.",
     ),
     chunk: int = typer.Option(
-        2048,
+        4096,
         "--chunk",
         "-c",
         help="Set record chunk.",
