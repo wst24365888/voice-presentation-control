@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Callable, Dict
+from typing import Callable, Dict, List, Union
 
 import pyautogui
 import typer
@@ -66,11 +66,19 @@ def start(
             data = json.load(f)
 
             try:
-                actions: Dict[str, str] = data[lang]
+                actions: Dict[str, Union[str, List[str]]] = data[lang]
                 for action_name, pyautogui_instruction in actions.items():
-                    action: Callable[[str], None] = lambda bind_instruction=pyautogui_instruction: pyautogui.press(
-                        bind_instruction
-                    )
+                    action: Callable[[Union[str, List[str]]], None]
+
+                    if isinstance(pyautogui_instruction, str):
+                        action = lambda bind_instruction=pyautogui_instruction: pyautogui.press(  # noqa: E731
+                            bind_instruction
+                        )
+                    else:
+                        action = lambda bind_instruction=pyautogui_instruction: pyautogui.hotkey(  # noqa: E731
+                            *bind_instruction
+                        )
+
                     action_matcher.add_action(action_name=action_name, action=action)
             except KeyError:
                 raise KeyError(f"Language '{lang}' is not set in actions.json")
