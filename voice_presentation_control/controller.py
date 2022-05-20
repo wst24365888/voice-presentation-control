@@ -1,18 +1,26 @@
+import wave
 from array import array
-import os
-import pyaudio
-from threading import Thread
-
+from glob import glob
+from collections import deque
+from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import cpu_count
 from queue import Queue
+from random import random
+from typing import List
+
+import pyaudio
 
 from voice_presentation_control.action_matcher import ActionMatcher
 from voice_presentation_control.mic import Mic
 from voice_presentation_control.recognizer import Recognizer
-import numpy
-import wave
 
 audio = pyaudio.PyAudio()
-MAX_RECORD_SECOND=2
+
+MAX_RECORD_SECOND = 1.2
+TMP_FRAME_SECOND = 1 / 1.5
+MAX_SILENT_SECOND = 1
+CHUNK_SLIDING_STEP = MAX_RECORD_SECOND/1.5
+
 
 class Controller:
     def __init__(
@@ -30,11 +38,13 @@ class Controller:
         self.rate = rate
         self.action_matcher = action_matcher
         self.recognizer = recognizer
-        self.tmp_frame_q = Queue(maxsize=int(self.rate / self.chunk)//1.5)
-        self.record_frame_q = Queue(maxsize=int(self.rate / self.chunk)*MAX_RECORD_SECOND)
-    def put_queue(self,_queue,item)->None:
+        self.tmp_frame_q = Queue(maxsize=int(self.rate / self.chunk * TMP_FRAME_SECOND))
+        self.record_frame_q = Queue(maxsize=int(self.rate / self.chunk) * MAX_RECORD_SECOND)
+        self.executor = ThreadPoolExecutor(max_workers=cpu_count())
+
+    def put_queue(self, _queue: Queue, item: bytes) -> None:
         if _queue.full():
-                _queue.get()
+            _queue.get()
         _queue.put(item)
 
     def start(self) -> None:
@@ -42,54 +52,62 @@ class Controller:
 
         while True:
             data = self.stream.read(self.chunk)
-            data_chunk = array("h", data)
-            vol = max(data_chunk)
-            self.put_queue(self.tmp_frame_q,data)
+            self.put_queue(self.tmp_frame_q, data)
 
-            if vol >= self.threshold:
+            data_chunk = array("h", data)
+            max_vol = max(data_chunk)
+
+            if max_vol >= self.threshold:
                 # print("recording triggered")
 
-                for qv in list(self.tmp_frame_q.queue):
-                    self.put_queue(self.record_frame_q,qv)
+                silent_flag = 0
+                progress_counter = len(list(self.tmp_frame_q.queue))
 
-                flag = 0
-                counter=len(list(self.tmp_frame_q.queue))-1
-                while flag<int(self.rate / self.chunk)*1.5:
-                    counter+=1
+                while self.tmp_frame_q.qsize() > 0:
+                    self.put_queue(self.record_frame_q, self.tmp_frame_q.get())
+
+                while silent_flag < self.rate / self.chunk * MAX_SILENT_SECOND:
+                    progress_counter += 1
+
                     data = self.stream.read(self.chunk)
-                    self.put_queue(self.record_frame_q,data)
-                    data_chunk = array("h", data)
-                    vol = max(data_chunk)
+                    self.put_queue(self.record_frame_q, data)
 
-                    if vol < self.threshold:
-                        flag += 1
+                    data_chunk = array("h", data)
+                    max_vol = max(data_chunk)
+
+                    if max_vol < self.threshold:
+                        silent_flag += 1
                     else:
-                        flag = 0
+                        silent_flag = 0
 
                     if self.record_frame_q.full():
-                        if counter % int((self.rate / self.chunk)*MAX_RECORD_SECOND/2) == 0:
-                            record_frames=list(self.record_frame_q.queue)
-                            Thread(target=self.get_recognizer_result,args=(record_frames,)).start()
-                            #print("recording stopped")
-                            #save_frames_to_wav(frames)
+                        # sliding window
+                        if (
+                            progress_counter % int((self.rate / self.chunk) * CHUNK_SLIDING_STEP)
+                            == 0
+                        ):
+                            record_frames = list(self.record_frame_q.queue)
+                            self.executor.submit(self.get_recognizer_result, record_frames)
+
+                record_frame_dq: deque = self.record_frame_q.queue
+                record_frame_dq.clear()
 
 
-                self.tmp_frame_q.queue.clear()
-                self.record_frame_q.queue.clear()
+                assert self.tmp_frame_q.empty()
+                assert self.record_frame_q.empty()
 
-    def get_recognizer_result(self,record_frames)->None:
+    def get_recognizer_result(self, record_frames: List[bytes],) -> None:
         result = self.recognizer.recognize(b"".join(record_frames), self.rate)
         #self.save_frames_to_wav(record_frames)
         if result is not None:
             print(result, end=" ", flush=True)
-            hit = self.action_matcher.match(result)
-            if hit:
-                print("(HIT)", end=" ", flush=True)
+            msg = self.action_matcher.match(result)
+            print(f"({msg})", flush=True)
 
-    def save_frames_to_wav(self,frames)->None:
-        wavefile = wave.open('voice_presentation_control/wave_tmp/test_save.wav', 'wb')
+    def save_frames_to_wav(self, frames: List[bytes]) -> None:
+        num_files=len(glob('voice_presentation_control/wave_tmp/*.wav'))
+        wavefile = wave.open(f"voice_presentation_control/wave_tmp/test_save_{num_files}.wav", "wb")
         wavefile.setnchannels(1)
         wavefile.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
         wavefile.setframerate(self.rate)
-        for frame in frames:
-            wavefile.writeframes(frame)
+        wavefile.writeframes(b"".join(frames))
