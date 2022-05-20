@@ -92,13 +92,12 @@ class Controller:
                 record_frame_dq: deque = self.record_frame_q.queue
                 record_frame_dq.clear()
 
-
                 assert self.tmp_frame_q.empty()
                 assert self.record_frame_q.empty()
 
-    def get_recognizer_result(self, record_frames: List[bytes],) -> None:
+    def get_recognizer_result(self, record_frames: List[bytes]) -> None:
         result = self.recognizer.recognize(b"".join(record_frames), self.rate)
-        #self.save_frames_to_wav(record_frames)
+        # self.save_frames_to_wav(record_frames)
         if result is not None:
             print(result, end=" ", flush=True)
             msg = self.action_matcher.match(result)
