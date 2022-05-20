@@ -99,9 +99,8 @@ class Controller:
         # self.save_frames_to_wav(record_frames)
         if result is not None:
             print(result, end=" ", flush=True)
-            hit = self.action_matcher.match(result)
-            if hit:
-                print("(HIT)", end=" ", flush=True)
+            msg = self.action_matcher.match(result)
+            print(f"({msg})", flush=True)
 
     def save_frames_to_wav(self, frames: List[bytes]) -> None:
         wavefile = wave.open(f"./test_save_{str(random())}.wav", "wb")
