@@ -20,7 +20,7 @@ class ActionMatcher:
 
     def match(self, instruction: str) -> str:
         for action_name, action in self.actions.items():
-            if action_name in instruction:
+            if action_name.replace(" ", "").lower() in instruction.replace(" ", "").lower():
                 executed = self.throttle(action, 1)
                 if executed:
                     return f"HIT: {action_name}"

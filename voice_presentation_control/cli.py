@@ -2,6 +2,7 @@ import json
 import os
 import platform
 import subprocess
+from enum import Enum
 from typing import Callable, Dict, List, Union
 
 import pyautogui
@@ -20,6 +21,11 @@ app = typer.Typer(
 )
 
 app.add_typer(mic.app, name="mic")
+
+
+class SupportedLanguage(str, Enum):
+    en = "en"
+    zh = "zh"
 
 
 def _version_callback(value: bool) -> None:
@@ -72,7 +78,7 @@ def start(
         "-s",
         help="Set max record seconds if your custom command is long.",
     ),
-    lang: str = typer.Option(
+    lang: SupportedLanguage = typer.Option(
         "en",
         "--language",
         "-l",
