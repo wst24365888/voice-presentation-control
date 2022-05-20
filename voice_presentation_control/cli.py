@@ -33,7 +33,7 @@ def config():
     config_file = os.path.join(os.path.dirname(__file__)) + "/configs/actions.json"
 
     if platform.system() == "Windows":
-        os.startfile(config_file)
+        os.startfile(config_file)  # type: ignore
     elif platform.system() == "Darwin":
         os.system("open " + config_file)
     else:
@@ -65,6 +65,12 @@ def start(
         "--rate",
         "-r",
         help="Set input stream rate.",
+    ),
+    max_record_seconds: int = typer.Option(
+        2,
+        "--max-record-seconds",
+        "-s",
+        help="Set max record seconds if your custom command is long.",
     ),
     lang: str = typer.Option(
         "en",
@@ -104,6 +110,7 @@ def start(
         threshold,
         chunk,
         rate,
+        max_record_seconds,
         action_matcher,
         Recognizer(lang=lang),
     )
