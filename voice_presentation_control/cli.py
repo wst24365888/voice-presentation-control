@@ -37,7 +37,7 @@ def start(
         help="Set threshold. Test your environment by `vpc mic test`.",
     ),
     chunk: int = typer.Option(
-        2048,
+        4096,
         "--chunk",
         "-c",
         help="Set record chunk.",
