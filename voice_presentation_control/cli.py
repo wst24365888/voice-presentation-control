@@ -66,6 +66,12 @@ def start(
         "-r",
         help="Set input stream rate.",
     ),
+    max_record_seconds: int = typer.Option(
+        2,
+        "--max-record-seconds",
+        "-s",
+        help="Set max record seconds if your custom command is long.",
+    ),
     lang: str = typer.Option(
         "en",
         "--language",
@@ -104,6 +110,7 @@ def start(
         threshold,
         chunk,
         rate,
+        max_record_seconds,
         action_matcher,
         Recognizer(lang=lang),
     )

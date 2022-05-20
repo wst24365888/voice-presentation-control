@@ -15,10 +15,8 @@ from voice_presentation_control.recognizer import Recognizer
 
 audio = pyaudio.PyAudio()
 
-MAX_RECORD_SECOND = 1.2
 TMP_FRAME_SECOND = 1 / 1.5
-MAX_SILENT_SECOND = 1
-CHUNK_SLIDING_STEP = MAX_RECORD_SECOND / 1.5
+MAX_SILENT_SECOND = 0.5
 
 
 class Controller:
@@ -28,6 +26,7 @@ class Controller:
         threshold: int,
         chunk: int,
         rate: int,
+        max_record_seconds: int,
         action_matcher: ActionMatcher,
         recognizer: Recognizer,
     ) -> None:
@@ -37,8 +36,13 @@ class Controller:
         self.rate = rate
         self.action_matcher = action_matcher
         self.recognizer = recognizer
+
+        self.max_record_seconds = max_record_seconds  # must be two times longer than max_instruction_seconds
+        self.chunk_sliding_step = self.max_record_seconds / 1.5
+
         self.tmp_frame_q = Queue(maxsize=int(self.rate / self.chunk * TMP_FRAME_SECOND))
-        self.record_frame_q = Queue(maxsize=int(self.rate / self.chunk * MAX_RECORD_SECOND))
+        self.record_frame_q = Queue(maxsize=int(self.rate / self.chunk * self.max_record_seconds))
+
         self.executor = ThreadPoolExecutor(max_workers=cpu_count())
 
     def put_queue(self, _queue: Queue, item: bytes) -> None:
@@ -81,9 +85,14 @@ class Controller:
 
                     if self.record_frame_q.full():
                         # sliding window
-                        if progress_counter % int((self.rate / self.chunk) * CHUNK_SLIDING_STEP) == 0:
+                        if progress_counter % int((self.rate / self.chunk) * self.chunk_sliding_step) == 0:
                             record_frames = list(self.record_frame_q.queue)
                             self.executor.submit(self.get_recognizer_result, record_frames)
+
+                if not self.record_frame_q.full():
+                    # for very short record
+                    record_frames = list(self.record_frame_q.queue)
+                    self.executor.submit(self.get_recognizer_result, record_frames)
 
                 record_frame_dq: deque = self.record_frame_q.queue
                 record_frame_dq.clear()
@@ -100,8 +109,8 @@ class Controller:
             print(f"({msg})", flush=True)
 
     def save_frames_to_wav(self, frames: List[bytes]) -> None:
-        num_files = len(glob("voice_presentation_control/wave_tmp/*.wav"))
-        wavefile = wave.open(f"voice_presentation_control/wave_tmp/test_save_{num_files}.wav", "wb")
+        num_files = len(glob("voice_presentation_control/wav_files/*.wav"))
+        wavefile = wave.open(f"voice_presentation_control/wav_files/test_save_{num_files}.wav", "wb")
         wavefile.setnchannels(1)
         wavefile.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
         wavefile.setframerate(self.rate)
