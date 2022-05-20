@@ -33,7 +33,7 @@ def config():
     config_file = os.path.join(os.path.dirname(__file__)) + "/configs/actions.json"
 
     if platform.system() == "Windows":
-        os.startfile(config_file)
+        os.startfile(config_file)  # type: ignore
     elif platform.system() == "Darwin":
         os.system("open " + config_file)
     else:
