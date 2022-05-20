@@ -136,7 +136,7 @@ See [releases](https://github.com/wst24365888/voice-presentation-control/release
 | `-c, --chunk`              | Set record chunk.  [default: 2048]                                         |
 | `-r, --rate`               | Set input stream rate.  [default: 44100]                                   |
 | `-s, --max-record-seconds` | Set max record seconds if your custom command is long.  [default: 2]       |
-| `-l, --language`           | Set language to recognize.  [default: en]                                  |
+| `-l, --language [en, zh]`  | Set language to recognize.  [default: en]                                  |
 | `--help`                   | Show help and exit.                                                        |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
