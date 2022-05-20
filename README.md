@@ -87,10 +87,11 @@ See [releases](https://github.com/wst24365888/voice-presentation-control/release
 
 ##### Commands
 
-| Command | Description                                  |
-| ------- | -------------------------------------------- |
-| `mic`   | Check the settings for the microphone input. |
-| `start` | Start vpc.                                   |
+| Command  | Description                                  |
+| -------- | -------------------------------------------- |
+| `config` | Edit the config file.                        |
+| `mic`    | Check the settings for the microphone input. |
+| `start`  | Start vpc.                                   |
 
 #### Usage of `vpc mic`
 
@@ -134,6 +135,7 @@ See [releases](https://github.com/wst24365888/voice-presentation-control/release
 | `-t, --threshold`          | Set threshold. Test your environment by `vpc mic test`.  [default: 3000]   |
 | `-c, --chunk`              | Set record chunk.  [default: 2048]                                         |
 | `-r, --rate`               | Set input stream rate.  [default: 44100]                                   |
+| `-l, --language`           | Set language to recognize.  [default: en]                                  |
 | `--help`                   | Show help and exit.                                                        |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
