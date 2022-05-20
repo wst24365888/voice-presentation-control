@@ -1,5 +1,7 @@
 import json
 import os
+import platform
+import subprocess
 from typing import Callable, Dict, List, Union
 
 import pyautogui
@@ -27,6 +29,18 @@ def _version_callback(value: bool) -> None:
 
 
 @app.command()
+def config():
+    config_file = os.path.join(os.path.dirname(__file__)) + "/configs/actions.json"
+
+    if platform.system() == "Windows":
+        os.startfile(config_file)
+    elif platform.system() == "Darwin":
+        os.system("open " + config_file)
+    else:
+        subprocess.call(["xdg-open", config_file])
+
+
+@app.command()
 def start(
     input_device_index: int = typer.Option(
         1,
@@ -46,17 +60,17 @@ def start(
         "-c",
         help="Set record chunk.",
     ),
-    lang: str = typer.Option(
-        "en",
-        "--language",
-        "-l",
-        help="Set language to recognize.",
-    ),
     rate: int = typer.Option(
         44100,
         "--rate",
         "-r",
         help="Set input stream rate.",
+    ),
+    lang: str = typer.Option(
+        "en",
+        "--language",
+        "-l",
+        help="Set language to recognize.",
     ),
 ) -> None:
     action_matcher = ActionMatcher()
