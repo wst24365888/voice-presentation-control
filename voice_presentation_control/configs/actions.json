@@ -3,5 +3,10 @@
         "next page": "down",
         "last page": "up",
         "presentation mode": ["alt", "f5"]
+    },
+    "zh": {
+        "下一页": "down",
+        "上一页": "up",
+        "简报模式": ["alt", "f5"]
     }
 }
