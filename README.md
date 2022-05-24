@@ -39,9 +39,10 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#installation">Installation</a></li>
-        <li><a href="#usages">Usages</a></li>
+        <li><a href="#try-it">Try It</a></li>
       </ul>
     </li>
+    <li><a href="#usages">Usages</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -71,13 +72,17 @@
 
 See [releases](https://github.com/wst24365888/voice-presentation-control/releases).
 
-### Usages
+### Try It
 
-#### Usage of `vpc`
+Just open your terminal, simply type `vpc start` and boom, it works!
+
+## Usages
+
+### Usage of `vpc`
 
 `vpc [OPTIONS] COMMAND`
 
-##### Options
+#### Options
 
 | Option          | Description                                          |
 | --------------- | ---------------------------------------------------- |
@@ -85,7 +90,7 @@ See [releases](https://github.com/wst24365888/voice-presentation-control/release
 | `--version`     | Show the version of voice-presentation-control.      |
 | `--help`        | Show help and exit.                                  |
 
-##### Commands
+#### Commands
 
 | Command  | Description                                  |
 | -------- | -------------------------------------------- |
@@ -93,28 +98,28 @@ See [releases](https://github.com/wst24365888/voice-presentation-control/release
 | `mic`    | Check the settings for the microphone input. |
 | `start`  | Start vpc.                                   |
 
-#### Usage of `vpc mic`
+### Usage of `vpc mic`
 
 `vpc mic [OPTIONS] COMMAND`
 
-##### Options
+#### Options
 
 | Option   | Description         |
 | -------- | ------------------- |
 | `--help` | Show help and exit. |
 
-##### Commands
+#### Commands
 
 | Command | Description                                                                                         |
 | ------- | --------------------------------------------------------------------------------------------------- |
 | `list`  | List all audio input devices. You can check the device index you want to use by using this command. |
 | `test`  | Test audio environment. Talk and determine the threshold by using this command.                     |
 
-#### Usage of `vpc mic test`
+### Usage of `vpc mic test`
 
 `vpc mic test [OPTIONS]`
 
-##### Options
+#### Options
 
 | Option                     | Description                                                                |
 | -------------------------- | -------------------------------------------------------------------------- |
@@ -123,11 +128,11 @@ See [releases](https://github.com/wst24365888/voice-presentation-control/release
 | `-r, --rate`               | Set input stream rate.  [default: 44100]                                   |
 | `--help`                   | Show help and exit.                                                        |
 
-#### Usage of `vpc start`
+### Usage of `vpc start`
 
 `vpc start [OPTIONS]`
 
-##### Options
+#### Options
 
 | Option                     | Description                                                                |
 | -------------------------- | -------------------------------------------------------------------------- |
