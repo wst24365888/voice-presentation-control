@@ -42,6 +42,7 @@
         <li><a href="#try-it">Try It</a></li>
       </ul>
     </li>
+    <li><a href="#actions">Actions</a></li>
     <li><a href="#usages">Usages</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
@@ -75,6 +76,16 @@ See [releases](https://github.com/wst24365888/voice-presentation-control/release
 ### Try It
 
 Just open your terminal, simply type `vpc start` and boom, it works!
+
+## Actions
+
+To check the default configuration of actions, see [actions.json](https://github.com/wst24365888/voice-presentation-control/blob/main/voice_presentation_control/configs/actions.json).
+
+To edit `actions.json`, use `vpc config`.
+
+In `actions.json`, the left-hand side is the sentence that triggers the action, and the right-hand side is the keyboard action to be triggered.
+
+For more actions you can configure, head over to [pyautogui](https://github.com/asweigart/pyautogui).
 
 ## Usages
 
