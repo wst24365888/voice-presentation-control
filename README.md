@@ -124,7 +124,7 @@ Just open your terminal, simply type `vpc start` and boom, it works!
 | Option                     | Description                                                                |
 | -------------------------- | -------------------------------------------------------------------------- |
 | `-i, --input-device-index` | Set input device index. Check your devices by `vpc mic list`. [default: 1] |
-| `-c, --chunk`              | Set record chunk.  [default: 2048]                                         |
+| `-c, --chunk`              | Set record chunk.  [default: 4096]                                         |
 | `-r, --rate`               | Set input stream rate.  [default: 44100]                                   |
 | `--help`                   | Show help and exit.                                                        |
 
@@ -138,7 +138,7 @@ Just open your terminal, simply type `vpc start` and boom, it works!
 | -------------------------- | -------------------------------------------------------------------------- |
 | `-i, --input-device-index` | Set input device index. Check your devices by `vpc mic list`. [default: 1] |
 | `-t, --threshold`          | Set threshold. Test your environment by `vpc mic test`.  [default: 3000]   |
-| `-c, --chunk`              | Set record chunk.  [default: 2048]                                         |
+| `-c, --chunk`              | Set record chunk.  [default: 4096]                                         |
 | `-r, --rate`               | Set input stream rate.  [default: 44100]                                   |
 | `-s, --max-record-seconds` | Set max record seconds if your custom command is long.  [default: 2]       |
 | `-l, --language [en, zh]`  | Set language to recognize.  [default: en]                                  |
