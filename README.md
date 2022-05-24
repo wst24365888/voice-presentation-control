@@ -18,7 +18,7 @@
 <br />
 <div align="center">
 <p align="center">
-    <a href="https://github.com/wst24365888/voice-presentation-control#usage"><strong>Explore Usage »</strong></a>
+    <a href="https://github.com/wst24365888/voice-presentation-control#usages"><strong>Explore Usages »</strong></a>
     <br />
     <br />
     <a href="https://github.com/wst24365888/voice-presentation-control/issues">Report Bug</a>
