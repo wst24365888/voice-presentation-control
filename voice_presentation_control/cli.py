@@ -88,7 +88,7 @@ def start(
     action_matcher = ActionMatcher()
 
     try:
-        with open(os.path.join(os.path.dirname(__file__)) + "/configs/actions.json") as f:
+        with open(os.path.join(os.path.dirname(__file__)) + "/configs/actions.json", encoding="utf-8") as f:
             data = json.load(f)
 
             try:
