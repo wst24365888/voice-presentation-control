@@ -51,10 +51,10 @@ class Controller:
         _queue.put(item)
 
     def start(self) -> None:
-        self.stream = self.mic.start(self.chunk, self.rate)
+        stream = self.mic.start(self.chunk, self.rate)
 
         while True:
-            data = self.stream.read(self.chunk)
+            data = stream.read(self.chunk)
             self.put_queue(self.tmp_frame_q, data)
 
             data_chunk = array("h", data)
@@ -72,7 +72,7 @@ class Controller:
                 while silent_flag < self.rate / self.chunk * MAX_SILENT_SECOND:
                     progress_counter += 1
 
-                    data = self.stream.read(self.chunk)
+                    data = stream.read(self.chunk)
                     self.put_queue(self.record_frame_q, data)
 
                     data_chunk = array("h", data)
