@@ -2,11 +2,10 @@ import wave
 from array import array
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor
-from glob import glob
+# from glob import glob
 from multiprocessing import cpu_count
 from queue import Queue
 from typing import List
-import numpy as np
 
 import pyaudio
 
@@ -46,8 +45,6 @@ class Controller:
 
         self.executor = ThreadPoolExecutor(max_workers=cpu_count())
 
-
-
     def put_queue(self, _queue: Queue, item: bytes) -> None:
         if _queue.full():
             _queue.get()
@@ -58,8 +55,8 @@ class Controller:
         max_amp = 0
         for f in record_frames:
             data_chunk = array("h", f)
-            max_amp = max(max_amp,max(data_chunk))
-        #volume_scaler = (std_vol/max_amp)
+            max_amp = max(max_amp, max(data_chunk))
+        # volume_scaler = (std_vol/max_amp)
 
         # find min volume in frames
         min_amp = 32767
@@ -73,7 +70,7 @@ class Controller:
         for i in range(0, len(record_frames)):
             data_chunk = array("h", record_frames[i])
             for j in range(0, len(data_chunk)):
-                #data_chunk[j] = int(float(data_chunk[j]) * volume_scaler)
+                # data_chunk[j] = int(float(data_chunk[j]) * volume_scaler)
 
                 temp_data_chunk = float(data_chunk[j] - min_amp) / interval * max_amp
                 if temp_data_chunk > 32767:
@@ -129,9 +126,9 @@ class Controller:
                     # for very short record
                     record_frames = list(self.record_frame_q.queue)
                     # adjust volume before getting recognizer result
-                    #self.save_frames_to_wav(record_frames, 0)
+                    # self.save_frames_to_wav(record_frames, 0)
                     self.adjust_volume(record_frames, self.standard_volume)
-                    #self.save_frames_to_wav(record_frames, 1)
+                    # self.save_frames_to_wav(record_frames, 1)
                     self.executor.submit(self.get_recognizer_result, record_frames)
 
                 record_frame_dq: deque = self.record_frame_q.queue
@@ -148,9 +145,9 @@ class Controller:
             msg = self.action_matcher.match(result)
             print(f"({msg})", flush=True)
 
-    def save_frames_to_wav(self, frames: List[bytes], num_files : int) -> None:
-        #num_files = len(glob("voice_presentation_control/wav_files/*.wav"))
-        #wavefile = wave.open(f"voice_presentation_control/wav_files/test_save_{num_files}.wav", "wb")
+    def save_frames_to_wav(self, frames: List[bytes], num_files: int) -> None:
+        # num_files = len(glob("voice_presentation_control/wav_files/*.wav"))
+        # wavefile = wave.open(f"voice_presentation_control/wav_files/test_save_{num_files}.wav", "wb")
         wavefile = wave.open(f"./wav_files/test_save_{num_files}.wav", "wb")
 
         wavefile.setnchannels(1)
