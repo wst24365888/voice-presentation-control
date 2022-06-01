@@ -2,6 +2,7 @@ import json
 import os
 import platform
 import subprocess
+from enum import Enum
 from typing import Callable, Dict, List, Union
 
 import pyautogui
@@ -20,6 +21,11 @@ app = typer.Typer(
 )
 
 app.add_typer(mic.app, name="mic")
+
+
+class SupportedLanguage(str, Enum):
+    en = "en"
+    zh = "zh"
 
 
 def _version_callback(value: bool) -> None:
@@ -66,7 +72,13 @@ def start(
         "-r",
         help="Set input stream rate.",
     ),
-    lang: str = typer.Option(
+    max_record_seconds: int = typer.Option(
+        2,
+        "--max-record-seconds",
+        "-s",
+        help="Set max record seconds if your custom command is long.",
+    ),
+    lang: SupportedLanguage = typer.Option(
         "en",
         "--language",
         "-l",
@@ -76,7 +88,7 @@ def start(
     action_matcher = ActionMatcher()
 
     try:
-        with open(os.path.join(os.path.dirname(__file__)) + "/configs/actions.json") as f:
+        with open(os.path.join(os.path.dirname(__file__)) + "/configs/actions.json", encoding="utf-8") as f:
             data = json.load(f)
 
             try:
@@ -104,6 +116,7 @@ def start(
         threshold,
         chunk,
         rate,
+        max_record_seconds,
         action_matcher,
         Recognizer(lang=lang),
     )

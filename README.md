@@ -18,7 +18,7 @@
 <br />
 <div align="center">
 <p align="center">
-    <a href="https://github.com/wst24365888/voice-presentation-control#usage"><strong>Explore Usage »</strong></a>
+    <a href="https://github.com/wst24365888/voice-presentation-control#usages"><strong>Explore Usages »</strong></a>
     <br />
     <br />
     <a href="https://github.com/wst24365888/voice-presentation-control/issues">Report Bug</a>
@@ -39,9 +39,11 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#installation">Installation</a></li>
-        <li><a href="#usages">Usages</a></li>
+        <li><a href="#try-it">Try It</a></li>
       </ul>
     </li>
+    <li><a href="#actions">Actions</a></li>
+    <li><a href="#usages">Usages</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -71,13 +73,27 @@
 
 See [releases](https://github.com/wst24365888/voice-presentation-control/releases).
 
-### Usages
+### Try It
 
-#### Usage of `vpc`
+Just open your terminal, simply type `vpc start` and boom, it works!
+
+## Actions
+
+To check the default configuration of actions, see [actions.json](https://github.com/wst24365888/voice-presentation-control/blob/main/voice_presentation_control/configs/actions.json).
+
+To edit `actions.json`, use `vpc config`.
+
+In `actions.json`, the left-hand side is the sentence that triggers the action, and the right-hand side is the keyboard action to be triggered.
+
+For more actions you can configure, head over to [pyautogui](https://github.com/asweigart/pyautogui).
+
+## Usages
+
+### Usage of `vpc`
 
 `vpc [OPTIONS] COMMAND`
 
-##### Options
+#### Options
 
 | Option          | Description                                          |
 | --------------- | ---------------------------------------------------- |
@@ -85,7 +101,7 @@ See [releases](https://github.com/wst24365888/voice-presentation-control/release
 | `--version`     | Show the version of voice-presentation-control.      |
 | `--help`        | Show help and exit.                                  |
 
-##### Commands
+#### Commands
 
 | Command  | Description                                  |
 | -------- | -------------------------------------------- |
@@ -93,49 +109,50 @@ See [releases](https://github.com/wst24365888/voice-presentation-control/release
 | `mic`    | Check the settings for the microphone input. |
 | `start`  | Start vpc.                                   |
 
-#### Usage of `vpc mic`
+### Usage of `vpc mic`
 
 `vpc mic [OPTIONS] COMMAND`
 
-##### Options
+#### Options
 
 | Option   | Description         |
 | -------- | ------------------- |
 | `--help` | Show help and exit. |
 
-##### Commands
+#### Commands
 
 | Command | Description                                                                                         |
 | ------- | --------------------------------------------------------------------------------------------------- |
 | `list`  | List all audio input devices. You can check the device index you want to use by using this command. |
 | `test`  | Test audio environment. Talk and determine the threshold by using this command.                     |
 
-#### Usage of `vpc mic test`
+### Usage of `vpc mic test`
 
 `vpc mic test [OPTIONS]`
 
-##### Options
+#### Options
 
 | Option                     | Description                                                                |
 | -------------------------- | -------------------------------------------------------------------------- |
 | `-i, --input-device-index` | Set input device index. Check your devices by `vpc mic list`. [default: 1] |
-| `-c, --chunk`              | Set record chunk.  [default: 2048]                                         |
+| `-c, --chunk`              | Set record chunk.  [default: 4096]                                         |
 | `-r, --rate`               | Set input stream rate.  [default: 44100]                                   |
 | `--help`                   | Show help and exit.                                                        |
 
-#### Usage of `vpc start`
+### Usage of `vpc start`
 
 `vpc start [OPTIONS]`
 
-##### Options
+#### Options
 
 | Option                     | Description                                                                |
 | -------------------------- | -------------------------------------------------------------------------- |
 | `-i, --input-device-index` | Set input device index. Check your devices by `vpc mic list`. [default: 1] |
 | `-t, --threshold`          | Set threshold. Test your environment by `vpc mic test`.  [default: 3000]   |
-| `-c, --chunk`              | Set record chunk.  [default: 2048]                                         |
+| `-c, --chunk`              | Set record chunk.  [default: 4096]                                         |
 | `-r, --rate`               | Set input stream rate.  [default: 44100]                                   |
-| `-l, --language`           | Set language to recognize.  [default: en]                                  |
+| `-s, --max-record-seconds` | Set max record seconds if your custom command is long.  [default: 2]       |
+| `-l, --language [en, zh]`  | Set language to recognize.  [default: en]                                  |
 | `--help`                   | Show help and exit.                                                        |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
