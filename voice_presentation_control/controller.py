@@ -6,6 +6,7 @@ from glob import glob
 from multiprocessing import cpu_count
 from queue import Queue
 from typing import List
+import librosa
 
 import pyaudio
 
