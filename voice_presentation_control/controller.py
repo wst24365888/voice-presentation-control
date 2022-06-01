@@ -55,19 +55,31 @@ class Controller:
 
     def adjust_volume(self, record_frames: list, std_vol: int) -> None:
         # find max volume in frames
-        amp = 0
+        max_amp = 0
         for f in record_frames:
             data_chunk = array("h", f)
-            amp = max(amp,max(data_chunk))
-        volume_scaler = (std_vol/amp)
+            max_amp = max(max_amp,max(data_chunk))
+        #volume_scaler = (std_vol/max_amp)
 
-        # adjust volume
+        # find min volume in frames
+        min_amp = 32767
+        for f in record_frames:
+            data_chunk = array("h", f)
+            min_amp = min(min_amp, min(data_chunk))
+
+        interval = max_amp + min_amp
+
+        # adjust volume by normalization
         for i in range(0, len(record_frames)):
             data_chunk = array("h", record_frames[i])
             for j in range(0, len(data_chunk)):
-                data_chunk[j] = int(float(data_chunk[j]) * volume_scaler)
-            record_frames[i] = array.tobytes(data_chunk)
+                #data_chunk[j] = int(float(data_chunk[j]) * volume_scaler)
 
+                temp_data_chunk = float(data_chunk[j] - min_amp) / interval * max_amp
+                if temp_data_chunk > 32767:
+                    temp_data_chunk = 32767
+                data_chunk[j] = int(temp_data_chunk)
+            record_frames[i] = array.tobytes(data_chunk)
 
     def start(self) -> None:
         self.stream = self.mic.start(self.chunk, self.rate)
