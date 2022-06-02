@@ -86,30 +86,40 @@ def start(
     ),
 ) -> None:
     action_matcher = ActionMatcher()
+    actions: Dict[str, Union[str, List[str]]] = {}
 
     try:
         with open(os.path.join(os.path.dirname(__file__)) + "/configs/actions.json", encoding="utf-8") as f:
-            data = json.load(f)
+            data: dict = json.load(f)
 
-            try:
-                actions: Dict[str, Union[str, List[str]]] = data[lang]
-                for action_name, pyautogui_instruction in actions.items():
-                    action: Callable[[Union[str, List[str]]], None]
-
-                    if isinstance(pyautogui_instruction, str):
-                        action = lambda bind_instruction=pyautogui_instruction: pyautogui.press(  # noqa: E731
-                            bind_instruction
-                        )
-                    else:
-                        action = lambda bind_instruction=pyautogui_instruction: pyautogui.hotkey(  # noqa: E731
-                            *bind_instruction
-                        )
-
-                    action_matcher.add_action(action_name=action_name, action=action)
-            except KeyError:
-                raise KeyError(f"Language '{lang}' is not set in actions.json")
+            if data.get(lang):
+                actions = data[lang]
+            else:
+                typer.echo(f"Language '{lang}' is not set in actions.json")
+                raise typer.Exit()
     except FileNotFoundError:
-        raise FileNotFoundError(f"Language '{lang}' is not supported.")
+        raise FileNotFoundError("Config file not found.")
+
+    for action_name, pyautogui_instruction in actions.items():
+        action: Callable[[Union[str, List[str]]], None]
+
+        if type(pyautogui_instruction) is str:
+            action = lambda bind_instruction=pyautogui_instruction: pyautogui.press(bind_instruction)  # noqa: E731
+        else:
+            action = lambda bind_instruction=pyautogui_instruction: pyautogui.hotkey(*bind_instruction)  # noqa: E731
+
+        action_matcher.add_action(action_name=action_name, action=action)
+
+    grammar: str = ""
+
+    if lang == SupportedLanguage.en:
+        grammar = '["{}"]'.format('", "'.join(actions.keys()))
+    elif lang == SupportedLanguage.zh:
+        action_names: List[str] = []
+        for action_name in actions.keys():
+            for character in action_name:
+                action_names.append(character)
+        grammar = '["{}"]'.format('", "'.join(action_names))
 
     controller = Controller(
         mic.Mic(input_device_index=input_device_index),
@@ -118,7 +128,7 @@ def start(
         rate,
         max_record_seconds,
         action_matcher,
-        Recognizer(lang=lang),
+        Recognizer(lang=lang, grammar=grammar),
     )
     controller.start()
 
