@@ -50,6 +50,30 @@ class Controller:
             _queue.get()
         _queue.put(item)
 
+    def adjust_volume(self, record_frames: list) -> None:
+        # find max volume in frames
+        max_amp = 0
+        for f in record_frames:
+            data_chunk = array("h", f)
+            max_amp = max(max_amp, max(data_chunk))
+
+        # find min volume in frames
+        min_amp = 32767
+        for f in record_frames:
+            data_chunk = array("h", f)
+            min_amp = min(min_amp, min(data_chunk))
+
+        mid = (max_amp + min_amp) / 2
+        gain = (max_amp - min_amp) / 2
+
+        # adjust volume by normalization
+        for i in range(0, len(record_frames)):
+            data_chunk = array("h", record_frames[i])
+            for j in range(0, len(data_chunk)):
+                temp_data_chunk = float(data_chunk[j] - mid) / gain * 32727
+                data_chunk[j] = int(temp_data_chunk)
+            record_frames[i] = array.tobytes(data_chunk)
+
     def start(self) -> None:
         stream = self.mic.start(self.chunk, self.rate)
 
@@ -87,11 +111,15 @@ class Controller:
                         # sliding window
                         if progress_counter % int((self.rate / self.chunk) * self.chunk_sliding_step) == 0:
                             record_frames = list(self.record_frame_q.queue)
+                            self.adjust_volume(record_frames)
                             self.executor.submit(self.get_recognizer_result, record_frames)
 
                 if not self.record_frame_q.full():
                     # for very short record
                     record_frames = list(self.record_frame_q.queue)
+                    # self.save_frames_to_wav(record_frames)
+                    self.adjust_volume(record_frames)
+                    # self.save_frames_to_wav(record_frames)
                     self.executor.submit(self.get_recognizer_result, record_frames)
 
                 record_frame_dq: deque = self.record_frame_q.queue
