@@ -57,8 +57,10 @@ class Controller:
         mid = (max_amp + min_amp) / 2
         gain = (max_amp - min_amp) / 2
 
-        def formula(x): int(float(x - mid) / gain * 32727)
-        def normalize(f): array.tobytes(array("h", list(map(formula, array("h", f)))))
+        def formula(x):
+            return int(float(x - mid) / gain * 32727)
+        def normalize(f):
+            return array.tobytes(array("h", list(map(formula, array("h", f)))))
         record_frames = list(map(normalize, record_frames))
 
         return record_frames
