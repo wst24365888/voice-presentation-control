@@ -113,13 +113,13 @@ def start(
     grammar: str = ""
 
     if lang == SupportedLanguage.en:
-        grammar = '["{}"]'.format('", "'.join(actions.keys()))
+        grammar = '["{}", "[unk]"]'.format('", "'.join(actions.keys()))
     elif lang == SupportedLanguage.zh:
         action_names: List[str] = []
         for action_name in actions.keys():
             for character in action_name:
                 action_names.append(character)
-        grammar = '["{}"]'.format('", "'.join(action_names))
+        grammar = '["{}", "[unk]"]'.format('", "'.join(action_names))
 
     controller = Controller(
         mic.Mic(input_device_index=input_device_index),
