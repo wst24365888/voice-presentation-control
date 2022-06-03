@@ -6,10 +6,9 @@ from glob import glob
 from multiprocessing import cpu_count
 from queue import Queue
 from typing import List
-import librosa
-import numpy as np
-import logmmse
 
+import logmmse
+import numpy as np
 import pyaudio
 
 from voice_presentation_control.action_matcher import ActionMatcher
@@ -90,7 +89,8 @@ class Controller:
                         if progress_counter % int((self.rate / self.chunk) * self.chunk_sliding_step) == 0:
                             record_frames = list(self.record_frame_q.queue)
                             self.executor.submit(self.get_recognizer_result, record_frames)
-                            print('predict')
+
+                # print("recording stopped")
 
                 if not self.record_frame_q.full():
                     # for very short record
@@ -104,84 +104,83 @@ class Controller:
                 assert self.record_frame_q.empty()
 
     def get_recognizer_result(self, record_frames: List[bytes]) -> None:
+        # self.save_frames_to_wav(b"".join(record_frames))
 
-        record_wav_values = self.audio_preprocess(record_frames)
-        record_wav_values =b"".join(record_frames)
-        result = self.recognizer.recognize(record_wav_values, self.rate)
-        #self.save_frames_to_wav(record_wav_values)
-        #new_record_frames = [ f*2 for f in record_frames]
-        #self.save_frames_to_wav(new_record_frames)
+        record_wav_bytes = self.audio_preprocess(record_frames)
+        # self.save_frames_to_wav(record_wav_bytes)
+
+        result = self.recognizer.recognize(record_wav_bytes, self.rate)
+
         if result is not None:
             print(result, end=" ", flush=True)
             msg = self.action_matcher.match(result)
             print(f"({msg})", flush=True)
 
-    def save_frames_to_wav(self, frames: List[bytes]) -> None:
-        num_files = len(glob("C:/UserD/Program/Project_Python/voice-presentation-control/voice_presentation_control/wave_files/*.wav"))
-        wavefile = wave.open(f"C:/UserD/Program/Project_Python/voice-presentation-control/voice_presentation_control/wave_files/test_save_{num_files}.wav", "w")
+    def save_frames_to_wav(self, frames: bytes) -> None:
+        num_files = len(glob("voice_presentation_control/wav_files/*.wav"))
+        wavefile = wave.open(f"voice_presentation_control/wav_files/test_save_{num_files}.wav", "wb")
         wavefile.setnchannels(1)
         wavefile.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
         wavefile.setframerate(self.rate)
         wavefile.writeframes(frames)
 
+    def volume_process(self, wave_values: np.ndarray) -> array:
+        def volume_process_func(wave_value: int) -> int:
+            if wave_value <= min_threshold and wave_value >= -min_threshold:
+                wave_value = 0
+            elif wave_value > min_threshold:
+                wave_value = int((wave_value - min_threshold) / max_g * max_volume_value)
+            elif wave_value < 0:
+                wave_value = int((wave_value + min_threshold) / min_g * max_volume_value)
+            return wave_value
 
-    def volume_process(self,wave_values):
-        def volume_process_func(wave_values):
-            if wave_values<= min_threshold and wave_values>= -min_threshold :
-                wave_values=0
-            elif wave_values>min_threshold:
-                wave_values = int((wave_values-min_threshold)/max_g*max_volume_value)
-            elif wave_values < 0:
-                wave_values = int((wave_values+min_threshold)/min_g*max_volume_value)
-            return wave_values
-        min_threshold=40
-        max_volume_value=15000
-        max_w=max(wave_values)
-        min_w=min(wave_values)
-        max_g = max_w-min_threshold
-        min_g = abs(min_w)-min_threshold
-        wave_values = map(volume_process_func,wave_values)
-        wave_values=array('h',list(wave_values))
+        min_threshold: int = 40
+        max_volume_value: int = 15000
+
+        max_w: int = max(wave_values)
+        min_w: int = min(wave_values)
+        max_g: int = max_w - min_threshold
+        min_g: int = abs(min_w) - min_threshold
+
+        wave_values_map = map(volume_process_func, wave_values)
+        wave_values_arr = array("h", wave_values_map)
+
+        return wave_values_arr
+
+    def denoise(self, wave_values: np.ndarray) -> np.ndarray:
+        wave_values = logmmse.logmmse(data=wave_values, sampling_rate=self.rate, noise_threshold=0.2, window_size=67)
+
         return wave_values
 
-    def denoise(self,wave_values):
-        wave_values = np.array(array('h',wave_values))
-        wave_values = logmmse.logmmse(data=wave_values, sampling_rate=self.rate,noise_threshold=0.2,window_size=67)
-        wave_values=array('h',wave_values)
-        return wave_values
-
-    def freqs_process(self,wave_values):
-        fft_wave=np.array(array('h',wave_values))
+    def freqs_process(self, fft_wave: np.ndarray) -> np.ndarray:
         sample_num = len(fft_wave)
-        sample_rate = 44100
-        audio_max = np.max(abs(fft_wave))
-        times = np.arange(sample_num)/sample_rate
+
+        times = np.arange(sample_num) / self.rate
         vib_fft = np.fft.fft(fft_wave)
-        fft_freqs =np.fft.fftfreq(sample_num,times[1]-times[0])
-        vib_fft_pow = np.abs(vib_fft)
+        fft_freqs = np.fft.fftfreq(sample_num, times[1] - times[0])
+
         # filter
         fft_filter = vib_fft.copy()
-        noise_indices = np.where((abs(fft_freqs)>6000) & (abs(fft_freqs)<12000))
-        fft_filter[noise_indices] = fft_filter[noise_indices]*0.4
+        noise_indices = np.where((abs(fft_freqs) > 6000) & (abs(fft_freqs) < 12000))
+        fft_filter[noise_indices] = fft_filter[noise_indices] * 0.4
 
-        noise_indices = np.where(abs(fft_freqs)>=12000)
-        fft_filter[noise_indices] = fft_filter[noise_indices]*0.05
+        noise_indices = np.where(abs(fft_freqs) >= 12000)
+        fft_filter[noise_indices] = fft_filter[noise_indices] * 0.05
 
-        noise_indices = np.where((abs(fft_freqs)<=6000) & (abs(fft_freqs)>3000))
-        fft_filter[noise_indices] = fft_filter[noise_indices]*0.8
+        noise_indices = np.where((abs(fft_freqs) <= 6000) & (abs(fft_freqs) > 3000))
+        fft_filter[noise_indices] = fft_filter[noise_indices] * 0.8
 
-        noise_indices = np.where((abs(fft_freqs)<=3000))
+        noise_indices = np.where((abs(fft_freqs) <= 3000))
         fft_filter[noise_indices] = fft_filter[noise_indices]
 
         filter_wave_ifft = np.fft.ifft(fft_filter).real
-        filter_wave = array('h',filter_wave_ifft.astype(int))
 
-        return filter_wave
+        return filter_wave_ifft.astype(int)
 
-    def audio_preprocess(self,wave_values):
-        wave_values = [np.array(array('h',i)) for i in wave_values]
-        wave_values = np.concatenate(wave_values,axis=0)
-        wave_values=self.denoise(wave_values)
-        wave_values=self.freqs_process(wave_values)
-        wave_values=self.volume_process(wave_values)
-        return wave_values
+    def audio_preprocess(self, record_frames: List[bytes]) -> bytes:
+        wave_values = np.array(array("h", b"".join(record_frames)))
+        wave_values = self.denoise(wave_values)
+        wave_values = self.freqs_process(wave_values)
+        wave_values_arr = self.volume_process(wave_values)
+
+        return wave_values_arr.tobytes()
