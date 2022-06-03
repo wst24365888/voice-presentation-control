@@ -55,7 +55,7 @@ def start(
         help="Set input device index. Check your devices by `vpc mic list`.",
     ),
     threshold: int = typer.Option(
-        3000,
+        1000,
         "--threshold",
         "-t",
         help="Set threshold. Test your environment by `vpc mic test`.",
