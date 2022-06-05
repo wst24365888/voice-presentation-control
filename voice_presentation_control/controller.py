@@ -17,7 +17,7 @@ from voice_presentation_control.recognizer import Recognizer
 
 audio = pyaudio.PyAudio()
 
-TMP_FRAME_SECOND = 1 / 1.5
+TMP_FRAME_SECOND = 1
 MAX_SILENT_SECOND = 0.5
 MAX_LOUD_SECOND = 0.5
 
@@ -44,7 +44,7 @@ class Controller:
         self.chunk_sliding_step = self.max_record_seconds / 1.5
 
         self.tmp_frame_q = Queue(maxsize=int(self.rate / self.chunk * TMP_FRAME_SECOND))
-        self.record_frame_q = Queue(maxsize=int(self.rate / self.chunk * self.max_record_seconds))
+        self.record_frame_q = Queue(maxsize=int(self.rate / self.chunk * (TMP_FRAME_SECOND + self.max_record_seconds)))
 
         self.executor = ThreadPoolExecutor(max_workers=cpu_count())
 
@@ -55,7 +55,7 @@ class Controller:
 
     def start(self) -> None:
         stream = self.mic.start(self.chunk, self.rate)
-        loud_flag = 0
+        loud_flag: int = 0
 
         while True:
             data = stream.read(self.chunk)
@@ -64,16 +64,19 @@ class Controller:
             data_chunk = array("h", data)
             max_vol = max(data_chunk)
             if max_vol >= self.threshold:
-                # print("recording triggered")
-
-                silent_flag = 0
+                silent_flag: int = 0
                 loud_flag += 1
+
                 # save the temp queue into record frame if max_vol >= threshold for 0.5 seconds
-                while loud_flag >= self.rate / self.chunk * MAX_LOUD_SECOND:
-                    progress_counter = len(list(self.tmp_frame_q.queue))
+                if loud_flag >= self.rate / self.chunk * MAX_LOUD_SECOND:
+                    # print("recording triggered")
+
+                    progress_counter = self.tmp_frame_q.qsize()
 
                     while self.tmp_frame_q.qsize() > 0:
                         self.put_queue(self.record_frame_q, self.tmp_frame_q.get())
+
+                    # self.save_frames_to_wav(b"".join(self.record_frame_q.queue))
 
                     while silent_flag < self.rate / self.chunk * MAX_SILENT_SECOND:
                         progress_counter += 1
@@ -97,10 +100,8 @@ class Controller:
 
                     # print("recording stopped")
 
-                    if not self.record_frame_q.full():
-                        # for very short record
-                        record_frames = list(self.record_frame_q.queue)
-                        self.executor.submit(self.get_recognizer_result, record_frames)
+                    record_frames = list(self.record_frame_q.queue)
+                    self.executor.submit(self.get_recognizer_result, record_frames)
 
                     record_frame_dq: deque = self.record_frame_q.queue
                     record_frame_dq.clear()
@@ -110,8 +111,6 @@ class Controller:
                     assert self.record_frame_q.empty()
             else:
                 loud_flag = 0
-                tmp_frame_dq: deque = self.tmp_frame_q.queue
-                tmp_frame_dq.clear()
 
     def get_recognizer_result(self, record_frames: List[bytes]) -> None:
         # self.save_frames_to_wav(b"".join(record_frames))
