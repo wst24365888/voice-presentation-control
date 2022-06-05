@@ -108,9 +108,9 @@ class Controller:
                 if not self.record_frame_q.full():
                     # for very short record
                     record_frames = list(self.record_frame_q.queue)
-                    #self.save_frames_to_wav(record_frames)
+                    # self.save_frames_to_wav(record_frames)
                     record_frames = self.adjust_volume(record_frames)
-                    #self.save_frames_to_wav(record_frames)
+                    # self.save_frames_to_wav(record_frames)
                     self.executor.submit(self.get_recognizer_result, record_frames)
 
                 record_frame_dq: deque = self.record_frame_q.queue
