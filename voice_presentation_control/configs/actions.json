@@ -2,6 +2,8 @@
     "en": {
         "next page": "down",
         "last page": "up",
+        "stop": "space",
+        "start": "space",
         "presentation mode": ["alt", "f5"]
     },
     "zh": {

@@ -73,6 +73,11 @@
 
 See [releases](https://github.com/wst24365888/voice-presentation-control/releases).
 
+> :warning: **If you encounter an error while installing** `PyAudio` (which is in our dependencies):
+>   - For Windows users, visit [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio) to pick appropriate `.whl` to install.
+>   - For OS X users, run `brew install portaudio`, then `pip install pyaudio`.
+>   - For Debian-derived Linux distributions (like Ubuntu and Mint) users, run `sudo apt-get install libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev && pip install pyaudio`.
+
 ### Try It
 
 Just open your terminal, simply type `vpc start` and boom, it works!
