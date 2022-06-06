@@ -3,7 +3,7 @@ import os
 import platform
 import subprocess
 from enum import Enum
-from typing import Callable, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 import pyautogui
 import typer
@@ -112,12 +112,25 @@ def start(
         raise FileNotFoundError("Config file not found.")
 
     for action_name, pyautogui_instruction in actions.items():
-        action: Callable[[Union[str, List[str]]], None]
-
         if type(pyautogui_instruction) is str:
-            action = lambda bind_instruction=pyautogui_instruction: pyautogui.press(bind_instruction)  # noqa: E731
+
+            def action(bind_instruction=pyautogui_instruction):  # type: ignore
+                return pyautogui.press(bind_instruction)
+
+        elif type(pyautogui_instruction) is list:
+
+            def action(bind_instruction=pyautogui_instruction):  # type: ignore
+                return pyautogui.hotkey(*bind_instruction)
+
+        elif type(pyautogui_instruction) is float or type(pyautogui_instruction) is int:
+
+            def action(bind_instruction=pyautogui_instruction):  # type: ignore
+                return pyautogui.scroll(bind_instruction)
+
         else:
-            action = lambda bind_instruction=pyautogui_instruction: pyautogui.hotkey(*bind_instruction)  # noqa: E731
+
+            def action():  # type: ignore
+                return print(f"Invalid action type of '{action_name}': {type(pyautogui_instruction)}")
 
         action_matcher.add_action(action_name=action_name, action=action)
 
