@@ -2,13 +2,14 @@
     "en": {
         "next page": "down",
         "last page": "up",
-        "stop": "space",
-        "start": "space",
+        "close window": ["alt", "f4"],
+        "click space": "space",
         "presentation mode": ["alt", "f5"]
     },
     "zh": {
         "下一页": "down",
         "上一页": "up",
+        "关闭": ["alt", "f4"],
         "简报模式": ["alt", "f5"]
     }
 }

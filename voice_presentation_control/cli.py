@@ -54,8 +54,8 @@ def start(
         "-i",
         help="Set input device index. Check your devices by `vpc mic list`.",
     ),
-    threshold: int = typer.Option(
-        1000,
+    threshold: float = typer.Option(
+        0.075,
         "--threshold",
         "-t",
         help="Set threshold. Test your environment by `vpc mic test`.",
@@ -73,7 +73,7 @@ def start(
         help="Set input stream rate.",
     ),
     max_record_seconds: int = typer.Option(
-        2,
+        3,
         "--max-record-seconds",
         "-s",
         help="Set max record seconds if your custom command is long.",
