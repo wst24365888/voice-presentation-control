@@ -93,7 +93,7 @@ def start(
     strict: bool = typer.Option(
         False,
         "--strict",
-        help="Set if using strict mode.",
+        help="Use this option for strict mode.",
     ),
 ) -> None:
     action_matcher = ActionMatcher()
