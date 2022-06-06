@@ -17,9 +17,8 @@ from voice_presentation_control.recognizer import Recognizer
 
 audio = pyaudio.PyAudio()
 
-TMP_FRAME_SECOND = 1
+TMP_FRAME_SECOND = 0.5
 MAX_SILENT_SECOND = 0.5
-MAX_LOUD_SECOND = 0.5
 
 
 class Controller:
@@ -45,7 +44,6 @@ class Controller:
 
         self.tmp_frame_q = Queue(maxsize=int(self.rate / self.chunk * TMP_FRAME_SECOND))
         self.record_frame_q = Queue(maxsize=int(self.rate / self.chunk * (TMP_FRAME_SECOND + self.max_record_seconds)))
-
         self.executor = ThreadPoolExecutor(max_workers=cpu_count())
 
     def put_queue(self, _queue: Queue, item: bytes) -> None:
@@ -73,8 +71,6 @@ class Controller:
 
     def start(self) -> None:
         stream = self.mic.start(self.chunk, self.rate)
-        loud_flag: int = 0
-
         while True:
             data = stream.read(self.chunk)
             self.put_queue(self.tmp_frame_q, data)
@@ -85,26 +81,28 @@ class Controller:
             # d_mean,d_std =self.get_eng(data_chunk)
             # print(zcr,max_vol,d_mean,d_std,sep='\t|')
 
-            max_vol = max(data_chunk)
             if zcr>self.threshold or  max_vol>750:
                 # print("recording triggered")
 
-                # save the temp queue into record frame if max_vol >= threshold for 0.5 seconds
-                if loud_flag >= self.rate / self.chunk * MAX_LOUD_SECOND:
-                    # print("recording triggered")
+                silent_flag = 0
+                progress_counter = len(list(self.tmp_frame_q.queue))
 
-                    progress_counter = self.tmp_frame_q.qsize()
+                while self.tmp_frame_q.qsize() > 0:
+                    self.put_queue(self.record_frame_q, self.tmp_frame_q.get())
 
-                    while self.tmp_frame_q.qsize() > 0:
-                        self.put_queue(self.record_frame_q, self.tmp_frame_q.get())
+                while silent_flag < self.rate / self.chunk * MAX_SILENT_SECOND:
+                    progress_counter += 1
 
+                    data = stream.read(self.chunk)
+                    self.put_queue(self.record_frame_q, data)
+                    self.put_queue(self.tmp_frame_q, data)
                     data_chunk = array("h", data)
                     zcr = self.get_zcr(data_chunk)
                     max_vol = max(data_chunk)
                     # d_mean,d_std =self.get_eng(data_chunk)
                     # print(zcr,max_vol,d_mean,d_std,sep='\t|')
 
-                    if zcr > self.threshold and max_vol>750 :
+                    if max_vol>750 :
                         silent_flag = 0
                     else:
                         silent_flag += 1
@@ -114,37 +112,22 @@ class Controller:
                         if progress_counter % int((self.rate / self.chunk) * self.chunk_sliding_step) == 0:
                             record_frames = list(self.record_frame_q.queue)
                             self.executor.submit(self.get_recognizer_result, record_frames)
-                            print('predict')
 
-                        if max_vol < self.threshold:
-                            silent_flag += 1
-                        else:
-                            silent_flag = 0
-
-                        if self.record_frame_q.full():
-                            # sliding window
-                            if progress_counter % int((self.rate / self.chunk) * self.chunk_sliding_step) == 0:
-                                record_frames = list(self.record_frame_q.queue)
-                                self.executor.submit(self.get_recognizer_result, record_frames)
-
-                    # print("recording stopped")
-
+                if not self.record_frame_q.full():
+                    # for very short record
                     record_frames = list(self.record_frame_q.queue)
                     self.executor.submit(self.get_recognizer_result, record_frames)
 
-                    record_frame_dq: deque = self.record_frame_q.queue
-                    record_frame_dq.clear()
-                    loud_flag = 0
-
-                    assert self.tmp_frame_q.empty()
-                    assert self.record_frame_q.empty()
-            else:
-                loud_flag = 0
+                record_frame_dq: deque = self.record_frame_q.queue
+                record_frame_dq.clear()
+                # assert self.tmp_frame_q.empty()
+                assert self.record_frame_q.empty()
 
     def get_recognizer_result(self, record_frames: List[bytes]) -> None:
         #self.save_frames_to_wav(b"".join(record_frames))
+        # print(len(record_frames))
         record_wav_bytes = self.audio_preprocess(record_frames)
-        #self.save_frames_to_wav(record_wav_bytes)
+        self.save_frames_to_wav(record_wav_bytes)
         result = self.recognizer.recognize(record_wav_bytes, self.rate)
 
         if result is not None:
