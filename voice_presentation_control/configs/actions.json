@@ -2,11 +2,17 @@
     "en": {
         "next page": "down",
         "last page": "up",
-        "presentation mode": ["alt", "f5"]
+        "close window": ["alt", "f4"],
+        "presentation mode": ["alt", "f5"],
+        "scroll up": 320,
+        "scroll down": -320
     },
     "zh": {
         "下一页": "down",
         "上一页": "up",
-        "简报模式": ["alt", "f5"]
+        "关闭": ["alt", "f4"],
+        "简报模式": ["alt", "f5"],
+        "往上": 320,
+        "往下": -320
     }
 }

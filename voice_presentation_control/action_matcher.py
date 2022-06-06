@@ -1,5 +1,5 @@
 import time
-from typing import Callable, Dict
+from typing import Callable, Dict, Tuple
 
 
 class ActionMatcher:
@@ -18,13 +18,13 @@ class ActionMatcher:
 
         return False
 
-    def match(self, instruction: str) -> str:
+    def match(self, instruction: str) -> Tuple[bool, str]:
         for action_name, action in self.actions.items():
             if action_name.replace(" ", "").lower() in instruction.replace(" ", "").lower():
                 executed = self.throttle(action, 1)
                 if executed:
-                    return f"HIT: {action_name}"
+                    return True, f"HIT: {action_name}"
 
-                return f"TOO FREQUENT: {action_name}"
+                return False, f"TOO FREQUENT: {action_name}"
 
-        return "NOT HIT"
+        return False, "NOT HIT"
