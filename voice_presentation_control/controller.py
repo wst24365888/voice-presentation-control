@@ -107,17 +107,15 @@ class Controller:
                     else:
                         silent_flag += 1
 
-                    if self.record_frame_q.full():
-                        # sliding window
-                        if progress_counter % int((self.rate / self.chunk) * self.chunk_sliding_step) == 0:
-                            record_frames = list(self.record_frame_q.queue)
-                            future: Future[bool] = self.executor.submit(self.get_recognizer_result, record_frames)
+                    if progress_counter % int((self.rate / self.chunk) * self.chunk_sliding_step) == 0:
+                        record_frames = list(self.record_frame_q.queue)
+                        future: Future[bool] = self.executor.submit(self.get_recognizer_result, record_frames)
 
-                            if future.result():
-                                record_frame_dq: deque = self.record_frame_q.queue
-                                record_frame_dq.clear()
+                        if future.result():
+                            record_frame_dq: deque = self.record_frame_q.queue
+                            record_frame_dq.clear()
 
-                                assert self.record_frame_q.empty()
+                            assert self.record_frame_q.empty()
 
                 # print("recording stopped")
 
