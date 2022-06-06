@@ -3,7 +3,7 @@ import os
 import platform
 import subprocess
 from enum import Enum
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, List, Optional, Union
 
 import pyautogui
 import typer
@@ -55,7 +55,7 @@ def start(
         help="Set input device index. Check your devices by `vpc mic list`.",
     ),
     vol_threshold: int = typer.Option(
-        1000,
+        750,
         "--vol-threshold",
         "-v",
         help="Set volume threshold. Test your environment by `vpc mic test`.",
@@ -90,6 +90,11 @@ def start(
         "-l",
         help="Set language to recognize.",
     ),
+    strict: bool = typer.Option(
+        False,
+        "--strict",
+        help="Set if using strict mode.",
+    ),
 ) -> None:
     action_matcher = ActionMatcher()
     actions: Dict[str, Union[str, List[str]]] = {}
@@ -116,16 +121,17 @@ def start(
 
         action_matcher.add_action(action_name=action_name, action=action)
 
-    grammar: str = ""
+    grammar: Optional[str] = None
 
-    if lang == SupportedLanguage.en:
-        grammar = '["{}", "[unk]"]'.format('", "'.join(actions.keys()))
-    elif lang == SupportedLanguage.zh:
-        action_names: List[str] = []
-        for action_name in actions.keys():
-            for character in action_name:
-                action_names.append(character)
-        grammar = '["{}", "[unk]"]'.format('", "'.join(action_names))
+    if not strict:
+        if lang == SupportedLanguage.en:
+            grammar = '["{}", "[unk]"]'.format('", "'.join(actions.keys()))
+        elif lang == SupportedLanguage.zh:
+            action_names: List[str] = []
+            for action_name in actions.keys():
+                for character in action_name:
+                    action_names.append(character)
+            grammar = '["{}", "[unk]"]'.format('", "'.join(action_names))
 
     controller = Controller(
         mic.Mic(input_device_index=input_device_index),
