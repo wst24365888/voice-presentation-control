@@ -125,9 +125,8 @@ class Controller:
 
     def get_recognizer_result(self, record_frames: List[bytes]) -> None:
         #self.save_frames_to_wav(b"".join(record_frames))
-        # print(len(record_frames))
         record_wav_bytes = self.audio_preprocess(record_frames)
-        self.save_frames_to_wav(record_wav_bytes)
+        #self.save_frames_to_wav(record_wav_bytes)
         result = self.recognizer.recognize(record_wav_bytes, self.rate)
 
         if result is not None:
