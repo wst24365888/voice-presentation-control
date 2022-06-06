@@ -4,6 +4,8 @@
         "last page": "up",
         "close window": ["alt", "f4"],
         "click space": "space",
+        "click left": "left",
+        "click right": "right",
         "presentation mode": ["alt", "f5"]
     },
     "zh": {

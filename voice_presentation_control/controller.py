@@ -71,6 +71,7 @@ class Controller:
 
     def start(self) -> None:
         stream = self.mic.start(self.chunk, self.rate)
+        num_loud=0
         while True:
             data = stream.read(self.chunk)
             self.put_queue(self.tmp_frame_q, data)
@@ -82,8 +83,13 @@ class Controller:
             # print(zcr,max_vol,d_mean,d_std,sep='\t|')
 
             if zcr>self.threshold or  max_vol>750:
-                # print("recording triggered")
+                num_loud +=1
+            else:
+                num_loud=0
 
+            if num_loud >= self.rate / self.chunk *0.4:
+                # print("recording triggered")
+                num_loud=0
                 silent_flag = 0
                 progress_counter = len(list(self.tmp_frame_q.queue))
 
@@ -102,7 +108,7 @@ class Controller:
                     # d_mean,d_std =self.get_eng(data_chunk)
                     # print(zcr,max_vol,d_mean,d_std,sep='\t|')
 
-                    if max_vol>750 :
+                    if zcr>self.threshold or  max_vol>750 :
                         silent_flag = 0
                     else:
                         silent_flag += 1
