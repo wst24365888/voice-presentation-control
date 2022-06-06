@@ -54,11 +54,17 @@ def start(
         "-i",
         help="Set input device index. Check your devices by `vpc mic list`.",
     ),
-    threshold: float = typer.Option(
+    vol_threshold: int = typer.Option(
+        1000,
+        "--vol-threshold",
+        "-v",
+        help="Set volume threshold. Test your environment by `vpc mic test`.",
+    ),
+    zcr_threshold: float = typer.Option(
         0.075,
-        "--threshold",
-        "-t",
-        help="Set threshold. Test your environment by `vpc mic test`.",
+        "--zcr-threshold",
+        "-z",
+        help="Set zcr threshold.",
     ),
     chunk: int = typer.Option(
         4096,
@@ -123,7 +129,8 @@ def start(
 
     controller = Controller(
         mic.Mic(input_device_index=input_device_index),
-        threshold,
+        vol_threshold,
+        zcr_threshold,
         chunk,
         rate,
         max_record_seconds,
