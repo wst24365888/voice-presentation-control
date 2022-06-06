@@ -162,3 +162,4 @@ cython_debug/
 
 voice_presentation_control/wav_files/
 *.wav
+*.ipynb
