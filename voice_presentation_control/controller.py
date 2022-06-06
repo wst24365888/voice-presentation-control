@@ -1,7 +1,7 @@
 import wave
 from array import array
 from collections import deque
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Future, ThreadPoolExecutor
 from glob import glob
 from multiprocessing import cpu_count
 from queue import Queue
@@ -102,7 +102,7 @@ class Controller:
                     zcr = self.get_zcr(data_chunk)
                     max_vol = max(data_chunk)
 
-                    if zcr > self.zcr_threshold or max_vol > self.vol_threshold:
+                    if max_vol > self.vol_threshold:
                         silent_flag = 0
                     else:
                         silent_flag += 1
@@ -111,7 +111,13 @@ class Controller:
                         # sliding window
                         if progress_counter % int((self.rate / self.chunk) * self.chunk_sliding_step) == 0:
                             record_frames = list(self.record_frame_q.queue)
-                            self.executor.submit(self.get_recognizer_result, record_frames)
+                            future: Future[bool] = self.executor.submit(self.get_recognizer_result, record_frames)
+
+                            if future.result():
+                                record_frame_dq: deque = self.record_frame_q.queue
+                                record_frame_dq.clear()
+
+                                assert self.record_frame_q.empty()
 
                 # print("recording stopped")
 
@@ -125,16 +131,21 @@ class Controller:
 
                 assert self.record_frame_q.empty()
 
-    def get_recognizer_result(self, record_frames: List[bytes]) -> None:
+    def get_recognizer_result(self, record_frames: List[bytes]) -> bool:
         # self.save_frames_to_wav(b"".join(record_frames))
         record_wav_bytes = self.audio_preprocess(record_frames)
         # self.save_frames_to_wav(record_wav_bytes)
         result = self.recognizer.recognize(record_wav_bytes, self.rate)
 
+        hit: bool = False
+
         if result is not None:
-            print(result, end=" ", flush=True)
-            msg = self.action_matcher.match(result)
-            print(f"({msg})", flush=True)
+            hit, msg = self.action_matcher.match(result)
+
+            if result != "":
+                print(f"{result} ({msg})", flush=True)
+
+        return hit
 
     def save_frames_to_wav(self, frames: bytes) -> None:
         num_files = len(glob("voice_presentation_control/wav_files/*.wav"))

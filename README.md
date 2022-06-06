@@ -153,7 +153,7 @@ For more actions you can configure, head over to [pyautogui](https://github.com/
 | Option                     | Description                                                                    |
 | -------------------------- | ------------------------------------------------------------------------------ |
 | `-i, --input-device-index` | Set input device index. Check your devices by `vpc mic list`.  [default: 1]    |
-| `-v, --vol-threshold`      | Set volume threshold. Test your environment by `vpc mic test`.  [default: 750] |
+| `-v, --vol-threshold`      | Set volume threshold. Test your environment by `vpc mic test`.  [default: 1000] |
 | `-z, --zcr-threshold`      | Set zcr threshold.  [default: 0.075]                                           |
 | `-c, --chunk`              | Set record chunk.  [default: 4096]                                             |
 | `-r, --rate`               | Set input stream rate.  [default: 44100]                                       |
