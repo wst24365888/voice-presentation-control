@@ -129,7 +129,7 @@ For more actions you can configure, head over to [pyautogui](https://github.com/
 | Command | Description                                                                                         |
 | ------- | --------------------------------------------------------------------------------------------------- |
 | `list`  | List all audio input devices. You can check the device index you want to use by using this command. |
-| `test`  | Test audio environment. Talk and determine the threshold by using this command.                     |
+| `test`  | Test audio environment. Talk and determine the volume threshold by using this command.              |
 
 ### Usage of `vpc mic test`
 
@@ -150,15 +150,16 @@ For more actions you can configure, head over to [pyautogui](https://github.com/
 
 #### Options
 
-| Option                     | Description                                                                |
-| -------------------------- | -------------------------------------------------------------------------- |
-| `-i, --input-device-index` | Set input device index. Check your devices by `vpc mic list`. [default: 1] |
-| `-t, --threshold`          | Set threshold. Test your environment by `vpc mic test`.  [default: 3000]   |
-| `-c, --chunk`              | Set record chunk.  [default: 4096]                                         |
-| `-r, --rate`               | Set input stream rate.  [default: 44100]                                   |
-| `-s, --max-record-seconds` | Set max record seconds if your custom command is long.  [default: 2]       |
-| `-l, --language [en, zh]`  | Set language to recognize.  [default: en]                                  |
-| `--help`                   | Show help and exit.                                                        |
+| Option                     | Description                                                                    |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| `-i, --input-device-index` | Set input device index. Check your devices by `vpc mic list`.  [default: 1]    |
+| `-v, --vol-threshold`      | Set volume threshold. Test your environment by `vpc mic test`.  [default: 750] |
+| `-z, --zcr-threshold`      | Set zcr threshold.  [default: 0.075]                                           |
+| `-c, --chunk`              | Set record chunk.  [default: 4096]                                             |
+| `-r, --rate`               | Set input stream rate.  [default: 44100]                                       |
+| `-s, --max-record-seconds` | Set max record seconds if your custom command is long.  [default: 2]           |
+| `-l, --language [en, zh]`  | Set language to recognize.  [default: en]                                      |
+| `--help`                   | Show help and exit.                                                            |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
