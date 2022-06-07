@@ -170,14 +170,22 @@ class Controller:
 
         # filter
         fft_filter = vib_fft.copy()
-        noise_indices = np.where((abs(fft_freqs) > 8000) & (abs(fft_freqs) < 10000))
-        fft_filter[noise_indices] = fft_filter[noise_indices] * 0.5  # .1
+        fft_filter = fft_filter / 10
 
-        noise_indices = np.where(abs(fft_freqs) >= 10000)
-        fft_filter[noise_indices] = fft_filter[noise_indices] * 0.1  # .05
+        noise_indices = np.where(((abs(fft_freqs) >= 100) & (abs(fft_freqs) < 200)))  # n
+        fft_filter[noise_indices] = fft_filter[noise_indices] * 10
 
-        noise_indices = np.where(abs(fft_freqs) >= 15000)
-        fft_filter[noise_indices] = fft_filter[noise_indices] * 0
+        noise_indices = np.where(((abs(fft_freqs) >= 1500) & (abs(fft_freqs) < 2000)))  # p
+        fft_filter[noise_indices] = fft_filter[noise_indices] * 2
+
+        noise_indices = np.where(((abs(fft_freqs) >= 3000) & (abs(fft_freqs) < 3500)))  # n
+        fft_filter[noise_indices] = fft_filter[noise_indices] * 5
+
+        noise_indices = np.where(((abs(fft_freqs) >= 5000) & (abs(fft_freqs) < 8000)))  # x
+        fft_filter[noise_indices] = fft_filter[noise_indices]
+
+        noise_indices = np.where((abs(fft_freqs) > 8000))
+        fft_filter[noise_indices] = fft_filter[noise_indices] * 0  # .1
 
         filter_wave_ifft = np.fft.ifft(fft_filter).real
 
